@@ -1,13 +1,12 @@
 package com.example.dictionary;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import com.example.dictionary.common.AbstractIntegrationTest;
+import org.testng.annotations.Test;
 
-@SpringBootTest
-class DictionaryImplApplicationTests {
+public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
 
     @Test
-    void contextLoads() {
+    public void contextLoads() {
+        System.out.println("123");
     }
-
 }
