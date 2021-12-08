@@ -20,13 +20,14 @@
         </createTable>
     </changeSet>
 
-    <changeSet author="Spiryaeva_Polina" id="add_bank_seq">
+    <changeSet author="Spiryaeva_Polina" id="add_banks_pkey_index">
         <preConditions onFail="MARK_RAN">
             <not>
-                <sequenceExists sequenceName="banks_sequence"/>
+                <primaryKeyExists primaryKeyName="banks_pkey"/>
             </not>
         </preConditions>
-        <createSequence sequenceName="banks_sequence"/>
+        <addPrimaryKey columnNames="id" constraintName="banks_pkey"
+                       tableName="banks"/>
     </changeSet>
 
     <changeSet id="insert_banks" author="Spiryaeva_Polina" runOnChange="true">
@@ -37,5 +38,14 @@
                 tableName="banks"
                 primaryKey="id"
                 file="db/data/banks.csv"/>
+    </changeSet>
+
+    <changeSet author="Spiryaeva_Polina" id="add_bank_seq">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="banks_sequence"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="banks_sequence" startValue="4" incrementBy="1"/>
     </changeSet>
 </databaseChangeLog>

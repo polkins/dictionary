@@ -9,4 +9,8 @@ public class ParametrizedTypeReferenceHolder {
     public static final ParameterizedTypeReference<DictionaryBankDto> DICTIONARY_BANK_TYPE_REFERENCE = new
             ParameterizedTypeReference<>() {
             };
+
+    public static final ParameterizedTypeReference<Long> ID_TYPE_REFERENCE = new
+            ParameterizedTypeReference<>() {
+            };
 }

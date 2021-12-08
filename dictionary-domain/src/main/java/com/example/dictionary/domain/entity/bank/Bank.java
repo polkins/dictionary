@@ -7,6 +7,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -22,9 +24,10 @@ public class Bank {
             name = "ID_GENERATOR",
             strategy = "enhanced-sequence",
             parameters = {
-                    @Parameter(name = "initial_value", value = "0"),
+                    @Parameter(name = "initial_value", value = "1"),
                     @Parameter(name = "sequence_name", value = "banks_sequence")
             })
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR")
     private Long id;
 
     private String name;
