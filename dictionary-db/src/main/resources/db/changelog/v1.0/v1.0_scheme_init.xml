@@ -19,4 +19,13 @@
             <column name="bic" type="VARCHAR(30)"/>
         </createTable>
     </changeSet>
+
+    <changeSet author="Spiryaeva_Polina" id="add_bank_seq">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="banks_sequence"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="banks_sequence"/>
+    </changeSet>
 </databaseChangeLog>
