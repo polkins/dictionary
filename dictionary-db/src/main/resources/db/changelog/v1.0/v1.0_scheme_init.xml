@@ -28,4 +28,14 @@
         </preConditions>
         <createSequence sequenceName="banks_sequence"/>
     </changeSet>
+
+    <changeSet id="insert_banks" author="Spiryaeva_Polina" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="banks"/>
+        </preConditions>
+        <loadUpdateData
+                tableName="banks"
+                primaryKey="id"
+                file="db/data/banks.csv"/>
+    </changeSet>
 </databaseChangeLog>

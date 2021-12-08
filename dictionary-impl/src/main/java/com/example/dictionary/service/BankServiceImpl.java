@@ -1,16 +1,17 @@
 package com.example.dictionary.service;
 
 import com.example.dictionary.api.dto.DictionaryBankDto;
+import com.example.dictionary.domain.entity.bank.Bank;
 import com.example.dictionary.mapper.DictionaryDtoBankMapper;
-import com.example.dictionary.repository.BankRepository;
 import lombok.Data;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 @Data
 public class BankServiceImpl implements BankService {
 
-    private final BankRepository bankRepository;
+    private final CrudRepository<Bank, Long> bankRepository;
     private final DictionaryDtoBankMapper mapper;
 
     @Override
