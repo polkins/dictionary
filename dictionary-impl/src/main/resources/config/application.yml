@@ -1,0 +1,78 @@
+server:
+  port: ${PORT_TO_EXPOSE:8080}
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  liquibase:
+    enabled: false
+    parameters:
+      schema: ${jpa_default_schema:dictionary}
+      text_array_type: ${jpa_text_array_type:text[]}
+      json_type: JSONB
+    change-log: classpath:database_changelog.xml
+    default-schema: dictionary
+    user: ${DATASOURCE_USER:dictionary}
+    password: ${DATASOURCE_PASSWORD:dictionary}
+  cloud:
+    config:
+      enabled: false
+  datasource:
+    hikari:
+      connectionTimeout: 30000
+      idleTimeout: 60000
+      maxLifetime: 7190000
+      minimumIdle: 2
+      maximumPoolSize: 50
+    tomcat:
+      max-idle: 2
+      min-idle: 2
+      jmx-enabled: true
+    driverClassName: org.postgresql.Driver
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/ib}?currentSchema=dictionary,public
+    username: ${DATASOURCE_USER_MS:dictionary}
+    password: ${DATASOURCE_PASSWORD_MS:dictionary}
+
+logging:
+  level:
+    ROOT: WARN
+    org.springframework: ERROR
+    org.hibernate.SQL: ERROR
+    org.hibernate.type: ERROR
+    liquibase.changelog: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+server:
+  port: 8080
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  liquibase:
+    enabled: true
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/ib}?currentSchema=dictionary,public
+  datasource:
+    hikari:
+      connectionTimeout: 250
+      maximumPoolSize: 5
+  jpa:
+    properties:
+      hibernate:
+        use_sql_comments: false
+        format_sql: false
+        enable_lazy_load_no_trans: true
+    show-sql: false
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.apache.kafka.clients.NetworkClient: ERROR
+    com.netflix.discovery: 'OFF'
+    org.hibernate.type: TRACE
+    org.hibernate.SQL: DEBUG
+    org.hibernate.transaction: DEBUG

@@ -9,5 +9,4 @@ public class DictionaryImplApplication {
     public static void main(String[] args) {
         SpringApplication.run(DictionaryImplApplication.class, args);
     }
-
 }
