@@ -11,5 +11,6 @@
 
     <!--service changelogs -->
     <include file="db/changelog/v1.0/v1.0_scheme_init.xml" relativeToChangelogFile="true"/>
+    <include file="db/changelog/v2.0/v2.0_scheme_initAccount.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
