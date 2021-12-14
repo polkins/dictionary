@@ -32,9 +32,12 @@ public class Account {
     private Bank bank;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "account_status")
     private StatusAccount accountStatus;
 
+    @Column(name = "account_number")
     private Long accountNumber;
 
+    @Column(name = "client_id")
     private Long clientId;
 }

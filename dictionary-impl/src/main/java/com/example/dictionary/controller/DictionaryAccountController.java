@@ -24,13 +24,13 @@ public class DictionaryAccountController implements DictionaryAccountService {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create Account")
     public ResponseEntity<Long> create(DictionaryAccountDto dictionaryAccountDto) {
-        return ResponseEntity.of(Optional.of(accountService.createAccount(dictionaryAccountDto)));
+        return new ResponseEntity(accountService.createAccount(dictionaryAccountDto), HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/{id}")
     @ApiOperation(value = "Get Account")
     public ResponseEntity<DictionaryAccountDto> getEntity(Long id) {
-        return ResponseEntity.of(Optional.of(accountService.getAccount(id)));
+        return new ResponseEntity(accountService.getAccount(id), HttpStatus.OK);
     }
 }
