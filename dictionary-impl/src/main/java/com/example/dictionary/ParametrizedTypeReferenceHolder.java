@@ -1,5 +1,6 @@
 package com.example.dictionary;
 
+import com.example.dictionary.api.dto.DictionaryAccountDto;
 import com.example.dictionary.api.dto.DictionaryBankDto;
 import org.springframework.core.ParameterizedTypeReference;
 
@@ -11,6 +12,10 @@ public class ParametrizedTypeReferenceHolder {
             };
 
     public static final ParameterizedTypeReference<Long> ID_TYPE_REFERENCE = new
+            ParameterizedTypeReference<>() {
+            };
+
+    public static final ParameterizedTypeReference<DictionaryAccountDto> DICTIONARY_ACCOUNT_TYPE_REFERENCE = new
             ParameterizedTypeReference<>() {
             };
 }

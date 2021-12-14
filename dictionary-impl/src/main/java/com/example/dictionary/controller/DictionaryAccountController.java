@@ -7,14 +7,15 @@ import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+import static com.example.dictionary.utils.DictionaryUtils.*;
+
 @Data
 @RestController
+@RequestMapping(API_PREFIX + DICTIONARY + API_PREFIX + ACCOUNT)//todo ?
 public class DictionaryAccountController implements DictionaryAccountService {
     final AccountService accountService;
 
@@ -27,7 +28,7 @@ public class DictionaryAccountController implements DictionaryAccountService {
     }
 
     @Override
-    @PostMapping("/{id}")
+    @GetMapping("/{id}")
     @ApiOperation(value = "Get Account")
     public ResponseEntity<DictionaryAccountDto> getEntity(Long id) {
         return ResponseEntity.of(Optional.of(accountService.getAccount(id)));

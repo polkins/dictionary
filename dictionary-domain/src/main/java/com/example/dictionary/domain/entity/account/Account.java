@@ -11,8 +11,9 @@ import javax.persistence.*;
 
 @Data
 @Accessors(chain = true)
-@Entity(name = "Account")
+@Entity
 @EqualsAndHashCode(of = "id")
+@Table(name = "accounts")
 public class Account {
 
     @Id
@@ -20,18 +21,20 @@ public class Account {
             name = "ID_GENERATOR",
             strategy = "enhanced-sequence",
             parameters = {
-                    @Parameter(name = "initial_value", value = "0")
+                    @Parameter(name = "initial_value", value = "0"),
+                    @Parameter(name = "sequence_name", value = "accounts_sequence")
             })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private StatusAccount status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bank_id")
+    private Bank bank;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private Bank idBank;
+    @Enumerated(EnumType.STRING)
+    private StatusAccount accountStatus;
 
     private Long accountNumber;
 
-    private Long idClient;
+    private Long clientId;
 }

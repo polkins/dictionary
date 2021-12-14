@@ -2,12 +2,10 @@ package com.example.dictionary.api.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.experimental.Accessors;
 
-@Getter
-@Setter
+@Data
 @Accessors(chain = true)
 @ApiModel("Счет клиента")
 public class DictionaryAccountDto {
@@ -15,7 +13,7 @@ public class DictionaryAccountDto {
     private Long id;
 
     @ApiModelProperty("Статус счета")
-    private StatusAccountDto status;
+    private StatusAccountDto accountStatus;
 
     @ApiModelProperty("Банк в котором находится счет")
     private DictionaryBankDto bank;
@@ -24,5 +22,5 @@ public class DictionaryAccountDto {
     private Long accountNumber;
 
     @ApiModelProperty("Идентификатор клиента")
-    private Long idClient;
+    private Long clientId;
 }

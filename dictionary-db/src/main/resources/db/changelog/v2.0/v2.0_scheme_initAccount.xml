@@ -14,21 +14,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="bank_id" type="BIGINT"/>
-            <column name="status" type="VARCHAR(20)"/>
+            <column name="account_status" type="VARCHAR(20)"/>
             <column name="account_number" type="BIGINT"/>
             <column name="client_id" type="BIGINT"/>
         </createTable>
-    </changeSet>
-
-    <changeSet id="add_fk_for_bankId_accounts" author="Gordeeva_Mary">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <foreignKeyConstraintExists foreignKeyName="bank_id"/>
-            </not>
-        </preConditions>
-        
-        <addForeignKeyConstraint baseTableName="accounts" baseColumnNames="bank_id" constraintName="fk_account_bank" referencedTableName="banks"
-                                 referencedColumnNames="id"/>
     </changeSet>
 
     <changeSet id="add_pkey_accounts" author="Gordeeva_Mary">
@@ -41,14 +30,15 @@
                        tableName="accounts"/>
     </changeSet>
 
-    <changeSet id="add_data_accounts" author="Gordeeva_Mary" runOnChange="true">
+    <changeSet id="add_fk_for_bankId_accounts" author="Gordeeva_Mary">
         <preConditions onFail="MARK_RAN">
-            <tableExists tableName="accounts"/>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="bank_id"/>
+            </not>
         </preConditions>
-        <loadUpdateData
-                tableName="accounts"
-                primaryKey="id"
-                file="db/data/accounts.csv"/>
+
+        <addForeignKeyConstraint baseTableName="accounts" baseColumnNames="bank_id" constraintName="bank_id" referencedTableName="banks"
+                                 referencedColumnNames="id"/>
     </changeSet>
 
     <changeSet id="add_accounts_seq" author="Gordeeva_Mary">
@@ -58,5 +48,15 @@
             </not>
         </preConditions>
         <createSequence sequenceName="accounts_sequence" startValue="5" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="add_data_accounts" author="Gordeeva_Mary" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="accounts"/>
+        </preConditions>
+        <loadUpdateData
+                tableName="accounts"
+                primaryKey="id"
+                file="db/data/accounts.csv"/>
     </changeSet>
 </databaseChangeLog>
