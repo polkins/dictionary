@@ -21,13 +21,13 @@ public class Bank {
 
     @Id
     @GenericGenerator(
-            name = "ID_GENERATOR",
+            name = "ID_GENERATOR_BANKS",
             strategy = "enhanced-sequence",
             parameters = {
                     @Parameter(name = "initial_value", value = "1"),
                     @Parameter(name = "sequence_name", value = "banks_sequence")
             })
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR_BANKS")
     private Long id;
 
     private String name;

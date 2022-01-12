@@ -1,0 +1,22 @@
+version: '2'
+services:
+  dictionary:
+    image: "polkins/dictionary"
+    links:
+      - postgres
+    ports:
+      - 8585:8585
+  auth:
+    image: "polkins/auth"
+    ports:
+      - 8080:8080
+  postgres:
+    image: "postgres:14.1"
+    volumes:
+      - ./dev/1-init.sql:/docker-entrypoint-initdb.d/1-init.sql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=postgres
+    ports:
+      - 5432:5432
