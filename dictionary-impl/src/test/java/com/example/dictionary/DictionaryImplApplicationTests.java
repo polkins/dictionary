@@ -33,10 +33,9 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
                 ID_TYPE_REFERENCE
         );
 
-        assertThat(createdBank.getBody()).isNotNull();
-        Long id = createdBank.getBody();
-        assertThat(id).isNotNull();
-        assertThat(id).isEqualTo(4);
+        assertThat(createdBank.getBody())
+                .isNotNull()
+                .isEqualTo(4);
     }
 
     @Test
@@ -71,10 +70,9 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
                 ID_TYPE_REFERENCE
         );
 
-        assertThat(createdAccount.getBody()).isNotNull();
-        Long id = createdAccount.getBody();
-        assertThat(id).isNotNull();
-        assertThat(id).isEqualTo(5);
+        assertThat(createdAccount.getBody())
+                .isNotNull()
+                .isEqualTo(5);
     }
 
     @Test
@@ -112,8 +110,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
                 DICTIONARY_BANK_TYPE_REFERENCE,
                 1
         );
-        DictionaryBankDto bankDto = selectedBank.getBody();
-        return bankDto;
+        return selectedBank.getBody();
     }
 
     private DictionaryAccountDto getDictionaryAccountDto() {

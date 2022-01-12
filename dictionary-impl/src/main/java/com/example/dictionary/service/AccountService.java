@@ -1,9 +1,9 @@
 package com.example.dictionary.service;
 
 import com.example.dictionary.api.dto.DictionaryAccountDto;
-import com.example.dictionary.exceptions.NotFoundEntityException;
+import java.util.Optional;
 
 public interface AccountService {
     Long createAccount(DictionaryAccountDto dictionaryAccountDto);
-    DictionaryAccountDto getAccount(Long id) throws NotFoundEntityException;
+    Optional<DictionaryAccountDto> getAccount(Long id);
 }

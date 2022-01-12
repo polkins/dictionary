@@ -1,8 +1,7 @@
 package com.example.dictionary.controller;
 
 import com.example.dictionary.api.dto.DictionaryAccountDto;
-import com.example.dictionary.api.interfaces.DictionaryAccountService;
-import com.example.dictionary.exceptions.NotFoundEntityException;
+import com.example.dictionary.api.interfaces.DictionaryAccountController;
 import com.example.dictionary.service.AccountService;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
@@ -15,7 +14,7 @@ import static com.example.dictionary.utils.DictionaryUtils.*;
 @Data
 @RestController
 @RequestMapping(API_PREFIX + DICTIONARY + API_PREFIX + ACCOUNT)//todo ?
-public class DictionaryAccountController implements DictionaryAccountService {
+public class DictionaryAccountControllerImpl implements DictionaryAccountController {
     final AccountService accountService;
 
     @Override
@@ -23,17 +22,15 @@ public class DictionaryAccountController implements DictionaryAccountService {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create Account")
     public ResponseEntity<Long> create(DictionaryAccountDto dictionaryAccountDto) {
-        return new ResponseEntity(accountService.createAccount(dictionaryAccountDto), HttpStatus.OK);
+        return new ResponseEntity<>(accountService.createAccount(dictionaryAccountDto), HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/{id}")
     @ApiOperation(value = "Get Account")
     public ResponseEntity<DictionaryAccountDto> getEntity(Long id) {
-        try {
-            return new ResponseEntity(accountService.getAccount(id), HttpStatus.OK);
-        } catch (NotFoundEntityException e) {
-            return new ResponseEntity(HttpStatus.OK);
-        }
+        return accountService.getAccount(id)
+                .map(acc -> new ResponseEntity<>(acc, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

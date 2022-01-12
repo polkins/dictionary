@@ -10,10 +10,10 @@ import org.hibernate.annotations.Parameter;
 import javax.persistence.*;
 
 @Data
-@Accessors(chain = true)
 @Entity
-@EqualsAndHashCode(of = "id")
+@Accessors(chain = true)
 @Table(name = "accounts")
+@EqualsAndHashCode(of = "id")
 public class Account {
 
     @Id
@@ -27,8 +27,8 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bank_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Bank bank;
 
     @Enumerated(EnumType.STRING)

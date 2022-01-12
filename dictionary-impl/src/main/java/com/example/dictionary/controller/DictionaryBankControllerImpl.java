@@ -1,7 +1,7 @@
 package com.example.dictionary.controller;
 
 import com.example.dictionary.api.dto.DictionaryBankDto;
-import com.example.dictionary.api.interfaces.DictionaryBankService;
+import com.example.dictionary.api.interfaces.DictionaryBankController;
 import com.example.dictionary.service.BankService;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
@@ -23,7 +23,7 @@ import static com.example.dictionary.utils.DictionaryUtils.DICTIONARY;
 @Data
 @RestController
 @RequestMapping(API_PREFIX + DICTIONARY)
-public class DictionaryBankController implements DictionaryBankService {
+public class DictionaryBankControllerImpl implements DictionaryBankController {
 
     private final BankService bankService;
 
@@ -39,6 +39,8 @@ public class DictionaryBankController implements DictionaryBankService {
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "Get Bank")
     public ResponseEntity<DictionaryBankDto> getEntity(@PathVariable("id") Long id){
-        return ResponseEntity.of(Optional.of(bankService.getBank(id)));
+        return bankService.getBank(id)
+                .map(bank -> new ResponseEntity<>(bank, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
