@@ -2,14 +2,13 @@ package com.example.dictionary.controller;
 
 import com.example.dictionary.api.dto.DictionaryAccountDto;
 import com.example.dictionary.api.interfaces.DictionaryAccountService;
+import com.example.dictionary.exceptions.NotFoundEntityException;
 import com.example.dictionary.service.AccountService;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 import static com.example.dictionary.utils.DictionaryUtils.*;
 
@@ -31,6 +30,10 @@ public class DictionaryAccountController implements DictionaryAccountService {
     @GetMapping("/{id}")
     @ApiOperation(value = "Get Account")
     public ResponseEntity<DictionaryAccountDto> getEntity(Long id) {
-        return new ResponseEntity(accountService.getAccount(id), HttpStatus.OK);
+        try {
+            return new ResponseEntity(accountService.getAccount(id), HttpStatus.OK);
+        } catch (NotFoundEntityException e) {
+            return new ResponseEntity(HttpStatus.OK);
+        }
     }
 }
