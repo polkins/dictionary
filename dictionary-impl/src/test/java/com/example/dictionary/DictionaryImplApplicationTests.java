@@ -22,7 +22,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
     protected TestRestTemplate restTemplate;
 
     @Test
-    public void create_bank_returnCorrectId() {
+    public void create_bank_returnCorrectBank() {
         DictionaryBankDto dictionaryBankDto = getBankDto();
         HttpEntity<?> request = new HttpEntity<>(dictionaryBankDto, getHeaders());
 
@@ -32,36 +32,28 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
                 request,
                 ID_TYPE_REFERENCE
         );
-
-        assertThat(createdBank.getBody())
-                .isNotNull()
-                .isEqualTo(4);
-    }
-
-    @Test
-    public void getBank_bankId_returnCorrectBank() {
-        DictionaryBankDto dictionaryBankDto = getBankDto();
-        HttpEntity<?> request2 = new HttpEntity<>(getHeaders());
-
+        var idBank = createdBank.getBody();
+        HttpEntity<?> requestSelect = new HttpEntity<>(getHeaders());
         var selectedBank = restTemplate.exchange(
                 API_PREFIX + DICTIONARY + "/{id}",
                 HttpMethod.GET,
-                request2,
+                requestSelect,
                 DICTIONARY_BANK_TYPE_REFERENCE,
-                4
+                idBank
         );
 
-        DictionaryBankDto bankBody = selectedBank.getBody();
-        assertThat(bankBody).isNotNull();
-        assertThat(bankBody.getAddress()).isEqualTo(dictionaryBankDto.getAddress());
-        assertThat(bankBody.getBic()).isEqualTo(dictionaryBankDto.getBic());
-        assertThat(bankBody.getName()).isEqualTo(dictionaryBankDto.getName());
+        assertThat(idBank).isNotNull();
+        var selectedBankDto = selectedBank.getBody();
+        assertThat(selectedBankDto.getAddress()).isEqualTo(dictionaryBankDto.getAddress());
+        assertThat(selectedBankDto.getBic()).isEqualTo(dictionaryBankDto.getBic());
+        assertThat(selectedBankDto.getName()).isEqualTo(dictionaryBankDto.getName());
     }
 
     @Test
-    public void create_account_returnCorrectId() {
+    public void create_account_returnCorrectAccount() {
         DictionaryAccountDto dictionaryAccountDto = getDictionaryAccountDto();
         HttpEntity<?> request = new HttpEntity<>(dictionaryAccountDto, getHeaders());
+        HttpEntity<?> requestSelect = new HttpEntity<>(getHeaders());
 
         ResponseEntity<Long> createdAccount = restTemplate.exchange(
                 API_PREFIX + DICTIONARY + API_PREFIX + ACCOUNT + "/create",
@@ -69,28 +61,17 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
                 request,
                 ID_TYPE_REFERENCE
         );
-
-        assertThat(createdAccount.getBody())
-                .isNotNull()
-                .isEqualTo(5);
-    }
-
-    @Test
-    public void getAccount_accountId_returnAccount() {
-        HttpEntity<?> request2 = new HttpEntity<>(getHeaders());
-
         var selectedAccount = restTemplate.exchange(
                 API_PREFIX + DICTIONARY + API_PREFIX + ACCOUNT + "/{id}",
                 HttpMethod.GET,
-                request2,
+                requestSelect,
                 DICTIONARY_ACCOUNT_TYPE_REFERENCE,
-                5
+                createdAccount.getBody()
         );
 
+        assertThat(createdAccount.getBody()).isNotNull();
         DictionaryBankDto bankDto = getDictionaryBankDto();
         DictionaryAccountDto accountDto = selectedAccount.getBody();
-        assertThat(accountDto).isNotNull();
-        DictionaryAccountDto dictionaryAccountDto = getDictionaryAccountDto();
         assertThat(accountDto.getAccountStatus()).isEqualTo(dictionaryAccountDto.getAccountStatus());
         assertThat(accountDto.getAccountNumber()).isEqualTo(dictionaryAccountDto.getAccountNumber());
         assertThat(accountDto.getClientId()).isEqualTo(dictionaryAccountDto.getClientId());
