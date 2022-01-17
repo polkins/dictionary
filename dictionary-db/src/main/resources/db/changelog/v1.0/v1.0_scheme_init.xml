@@ -20,6 +20,34 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="Spiryaeva_Polina" id="add_accounts">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="accounts"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="accounts">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_number" type="VARCHAR(20)"/>
+            <column name="client_id" type="BIGINT"/>
+            <column name="bank_id" type="BIGINT"/>
+            <column name="balance" type="NUMERIC"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Spiryaeva_Polina" id="add_accounts_pkey_index">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <primaryKeyExists primaryKeyName="accounts_pkey"/>
+            </not>
+        </preConditions>
+        <addPrimaryKey columnNames="id" constraintName="accounts_pkey"
+                       tableName="accounts"/>
+    </changeSet>
+
     <changeSet author="Spiryaeva_Polina" id="add_banks_pkey_index">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -47,5 +75,14 @@
             </not>
         </preConditions>
         <createSequence sequenceName="banks_sequence" startValue="4" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet author="Spiryaeva_Polina" id="add_account_seq">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="accounts_sequence"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="accounts_sequence" startValue="1" incrementBy="1"/>
     </changeSet>
 </databaseChangeLog>

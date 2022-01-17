@@ -34,6 +34,7 @@
         <testcontainers.version>1.16.2</testcontainers.version>
         <testng.version>7.4.0</testng.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
+        <auth-client.version>0.0.1-SNAPSHOT</auth-client.version>
     </properties>
 
     <modules>
@@ -118,6 +119,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.nonsense</groupId>
+                <artifactId>auth-client</artifactId>
+                <version>${auth-client.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
