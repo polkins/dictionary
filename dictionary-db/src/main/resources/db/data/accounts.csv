@@ -1,0 +1,5 @@
+id,bank_id,account_status,account_number,client_id
+1,1,LOCKED,408698608254,1
+2,1,ACTIVE,408698608254,1
+3,1,ACTIVE,4086986082547,1
+4,1,ACTIVE,4086986082,2

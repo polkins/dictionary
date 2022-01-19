@@ -1,13 +1,14 @@
 package com.example.dictionary.common;
 
 import com.example.TestConfiguration;
-import com.example.dictionary.controller.DictionaryBankController;
+import com.example.dictionary.controller.DictionaryBankControllerImpl;
 import com.example.dictionary.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.testng.annotations.BeforeMethod;
+
 import ru.nonsense.auth.client.feign.AuthControllerFeign;
 
 @ActiveProfiles("test")
@@ -20,7 +21,7 @@ public abstract class AbstractIntegrationTest extends PostgresIntegrationTest {
     private AuthControllerFeign authControllerFeign;
 
     @Autowired
-    protected DictionaryBankController dictionaryBankController;
+    protected DictionaryBankControllerImpl dictionaryBankController;
 
     @Autowired
     protected BankService bankService;

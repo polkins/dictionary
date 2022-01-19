@@ -4,12 +4,13 @@ import com.example.dictionary.api.dto.CreateAccountDto;
 import com.example.dictionary.api.dto.DepositWithdrawAccountDto;
 import com.example.dictionary.api.dto.DictionaryAccountDto;
 import com.example.dictionary.api.dto.TransferAccountDto;
+import com.example.dictionary.api.interfaces.DictionaryAccountController;
 import com.example.dictionary.domain.entity.account.Account;
 import com.example.dictionary.mapper.DictionaryDtoAccountMapper;
 import com.example.dictionary.repository.AccountRepository;
 import com.example.dictionary.repository.BankRepository;
 import io.swagger.annotations.ApiOperation;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,16 +30,17 @@ import java.util.Random;
 
 import static com.example.dictionary.utils.DictionaryUtils.ACCOUNT;
 
-@Data
 @RestController
 @RequestMapping(ACCOUNT)
-public class DictionaryAccountController {
+@RequiredArgsConstructor
+public class DictionaryAccountControllerImpl implements DictionaryAccountController {
 
     private final AccountRepository accountRepository;
     private final BankRepository bankRepository;
     private final AuthControllerFeign authControllerFeign;
     private final DictionaryDtoAccountMapper mapper;
 
+    @Override
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create account")
@@ -61,12 +63,14 @@ public class DictionaryAccountController {
         return ResponseEntity.ok(mapper.toDto(account));
     }
 
+    @Override
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "Get account")
     public ResponseEntity<DictionaryAccountDto> getEntity(@PathVariable("id") Long id) {
         return ResponseEntity.ok(mapper.toDto(accountRepository.getById(id)));
     }
 
+    @Override
     @PostMapping(value = "/deposit")
     @ApiOperation(value = "Deposit money into an account")
     public ResponseEntity<DictionaryAccountDto> deposit(@RequestBody DepositWithdrawAccountDto depositWithdrawAccountDto) {
@@ -76,6 +80,7 @@ public class DictionaryAccountController {
         return ResponseEntity.ok(mapper.toDto(accountRepository.save(account)));
     }
 
+    @Override
     @PostMapping(value = "/withdraw")
     @ApiOperation(value = "Withdraw money from the account")
     public ResponseEntity<DictionaryAccountDto> withdraw(@RequestBody DepositWithdrawAccountDto depositWithdrawAccountDto) {
@@ -86,6 +91,7 @@ public class DictionaryAccountController {
     }
 
     // TODO: вынести в сервис
+    @Override
     @Transactional
     @PostMapping(value = "/transfer")
     @ApiOperation(value = "Transfer money from the account to another account")

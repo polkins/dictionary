@@ -6,9 +6,10 @@ import com.example.dictionary.mapper.DictionaryDtoBankMapper;
 import lombok.Data;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
-@Service
 @Data
+@Service
 public class BankServiceImpl implements BankService {
 
     private final CrudRepository<Bank, Long> bankRepository;
@@ -20,9 +21,8 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    public DictionaryBankDto getBank(Long id) {
+    public Optional<DictionaryBankDto> getBank(Long id) {
         return bankRepository.findById(id)
-                .map(mapper::toDto)
-                .orElse(new DictionaryBankDto());
+                .map(mapper::toDto);
     }
 }
