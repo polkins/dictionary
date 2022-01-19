@@ -4,7 +4,7 @@ import com.example.dictionary.api.dto.DictionaryBankDto;
 import com.example.dictionary.api.interfaces.DictionaryBankController;
 import com.example.dictionary.service.BankService;
 import io.swagger.annotations.ApiOperation;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +19,9 @@ import java.util.Optional;
 
 import static com.example.dictionary.utils.DictionaryUtils.BANK;
 
-@Data
 @RestController
 @RequestMapping(BANK)
+@RequiredArgsConstructor
 public class DictionaryBankControllerImpl implements DictionaryBankController {
 
     private final BankService bankService;
