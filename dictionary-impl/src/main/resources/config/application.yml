@@ -1,10 +1,10 @@
 server:
-  port: ${PORT_TO_EXPOSE:8080}
+  port: ${PORT_TO_EXPOSE:8585}
 spring:
   main:
     allow-bean-definition-overriding: true
   liquibase:
-    enabled: false
+    enabled: true
     parameters:
       schema: ${jpa_default_schema:dictionary}
       text_array_type: ${jpa_text_array_type:text[]}
@@ -13,9 +13,10 @@ spring:
     default-schema: dictionary
     user: ${DATASOURCE_USER:dictionary}
     password: ${DATASOURCE_PASSWORD:dictionary}
+    url: ${DATASOURCE_URL:jdbc:postgresql://postgres:5432/postgres}?currentSchema=dictionary,public
   cloud:
     config:
-      enabled: false
+      enabled: true
   datasource:
     hikari:
       connectionTimeout: 30000
@@ -28,13 +29,22 @@ spring:
       min-idle: 2
       jmx-enabled: true
     driverClassName: org.postgresql.Driver
-    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/ib}?currentSchema=dictionary,public
+    url: ${DATASOURCE_URL:jdbc:postgresql://postgres:5432/postgres}?currentSchema=dictionary,public
     username: ${DATASOURCE_USER_MS:dictionary}
     password: ${DATASOURCE_PASSWORD_MS:dictionary}
+  feign:
+    client:
+      config:
+        default:
+          connectTimeout: 5000
+          readTimeout: 5000
+          loggerLevel: basic
+auth:
+  url: auth:8080
 
 logging:
   level:
-    ROOT: WARN
+    ROOT: INFO
     org.springframework: ERROR
     org.hibernate.SQL: ERROR
     org.hibernate.type: ERROR
@@ -45,8 +55,40 @@ spring:
   config:
     activate:
       on-profile: local
-server:
-  port: 8080
+  liquibase:
+    enabled: true
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}?currentSchema=dictionary,public
+  jpa:
+    properties:
+      hibernate:
+        use_sql_comments: false
+        format_sql: false
+        enable_lazy_load_no_trans: true
+    show-sql: true
+  datasource:
+    hikari:
+      connectionTimeout: 30000
+      idleTimeout: 60000
+      maxLifetime: 7190000
+      minimumIdle: 2
+      maximumPoolSize: 50
+    tomcat:
+      max-idle: 2
+      min-idle: 2
+      jmx-enabled: true
+    driverClassName: org.postgresql.Driver
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}?currentSchema=dictionary,public
+    username: ${DATASOURCE_USER_MS:dictionary}
+    password: ${DATASOURCE_PASSWORD_MS:dictionary}
+    feign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: basic
+auth:
+  url: localhost:8080
 
 ---
 spring:
@@ -55,7 +97,7 @@ spring:
       on-profile: test
   liquibase:
     enabled: true
-    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/ib}?currentSchema=dictionary,public
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}?currentSchema=dictionary,public
   datasource:
     hikari:
       connectionTimeout: 250

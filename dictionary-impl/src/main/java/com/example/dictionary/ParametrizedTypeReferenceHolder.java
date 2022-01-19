@@ -15,7 +15,7 @@ public class ParametrizedTypeReferenceHolder {
             ParameterizedTypeReference<>() {
             };
 
-    public static final ParameterizedTypeReference<DictionaryAccountDto> DICTIONARY_ACCOUNT_TYPE_REFERENCE = new
+    public static final ParameterizedTypeReference<DictionaryAccountDto> ACCOUNT_TYPE_REFERENCE = new
             ParameterizedTypeReference<>() {
             };
 }

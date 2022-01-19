@@ -1,14 +1,8 @@
 package com.example.dictionary.repository;
 
 import com.example.dictionary.domain.entity.account.Account;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.persistence.EntityManager;
-
-@Repository
-public class AccountRepository extends SimpleJpaRepository<Account, Long> {
-    public AccountRepository(EntityManager entityManager){
-        super(Account.class, entityManager);
-    }
+public interface AccountRepository extends JpaRepository<Account, Long> {
+    Account findByAccountNumber(String accountNumber);
 }

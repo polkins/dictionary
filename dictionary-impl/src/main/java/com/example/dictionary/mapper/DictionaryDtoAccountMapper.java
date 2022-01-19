@@ -5,5 +5,5 @@ import com.example.dictionary.domain.entity.account.Account;
 import org.mapstruct.Mapper;
 
 @Mapper
-public interface DictionaryDtoAccountMapper extends AbstractMapper<Account, DictionaryAccountDto>{
+public interface DictionaryDtoAccountMapper extends AbstractMapper<Account, DictionaryAccountDto> {
 }

@@ -1,43 +1,38 @@
 package com.example.dictionary.domain.entity.account;
 
-import com.example.dictionary.domain.entity.bank.Bank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Data
-@Entity
 @Accessors(chain = true)
-@Table(name = "accounts")
+@Entity(name = "accounts")
 @EqualsAndHashCode(of = "id")
 public class Account {
 
     @Id
     @GenericGenerator(
-            name = "ID_GENERATOR",
+            name = "ID_GENERATOR_ACCOUNTS",
             strategy = "enhanced-sequence",
             parameters = {
-                    @Parameter(name = "initial_value", value = "0"),
+                    @Parameter(name = "initial_value", value = "1"),
                     @Parameter(name = "sequence_name", value = "accounts_sequence")
             })
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ID_GENERATOR_ACCOUNTS")
     private Long id;
 
-    @JoinColumn(name = "bank_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Bank bank;
+    private String accountNumber;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "account_status")
-    private StatusAccount accountStatus;
-
-    @Column(name = "account_number")
-    private Long accountNumber;
-
-    @Column(name = "client_id")
     private Long clientId;
+
+    private Long bankId;
+
+    private Double balance;
 }

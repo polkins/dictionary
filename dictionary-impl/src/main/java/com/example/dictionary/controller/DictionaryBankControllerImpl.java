@@ -17,12 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-import static com.example.dictionary.utils.DictionaryUtils.API_PREFIX;
-import static com.example.dictionary.utils.DictionaryUtils.DICTIONARY;
+import static com.example.dictionary.utils.DictionaryUtils.BANK;
 
 @Data
 @RestController
-@RequestMapping(API_PREFIX + DICTIONARY)
+@RequestMapping(BANK)
 public class DictionaryBankControllerImpl implements DictionaryBankController {
 
     private final BankService bankService;

@@ -9,12 +9,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.testng.annotations.BeforeMethod;
 
+import ru.nonsense.auth.client.feign.AuthControllerFeign;
+
 @ActiveProfiles("test")
 @SpringBootTest(
         classes = TestConfiguration.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 public abstract class AbstractIntegrationTest extends PostgresIntegrationTest {
+    @Autowired
+    private AuthControllerFeign authControllerFeign;
+
     @Autowired
     protected DictionaryBankControllerImpl dictionaryBankController;
 
@@ -27,6 +32,7 @@ public abstract class AbstractIntegrationTest extends PostgresIntegrationTest {
 
     protected static HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "auth");
 
         return headers;
     }

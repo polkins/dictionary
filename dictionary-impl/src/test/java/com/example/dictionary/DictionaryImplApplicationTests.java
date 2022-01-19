@@ -1,112 +1,196 @@
 package com.example.dictionary;
 
+import com.example.dictionary.api.dto.CreateAccountDto;
+import com.example.dictionary.api.dto.DepositWithdrawAccountDto;
 import com.example.dictionary.api.dto.DictionaryAccountDto;
 import com.example.dictionary.api.dto.DictionaryBankDto;
-import com.example.dictionary.api.dto.StatusAccountDto;
+import com.example.dictionary.api.dto.TransferAccountDto;
 import com.example.dictionary.common.AbstractIntegrationTest;
-import org.jetbrains.annotations.Nullable;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.testng.annotations.Test;
+import ru.nonsense.auth.client.api.dto.ClientDto;
+import ru.nonsense.auth.client.feign.AuthControllerFeign;
 
-import static com.example.dictionary.ParametrizedTypeReferenceHolder.*;
-import static com.example.dictionary.utils.DictionaryUtils.*;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+import static com.example.dictionary.ParametrizedTypeReferenceHolder.ACCOUNT_TYPE_REFERENCE;
+import static com.example.dictionary.ParametrizedTypeReferenceHolder.DICTIONARY_BANK_TYPE_REFERENCE;
+import static com.example.dictionary.ParametrizedTypeReferenceHolder.ID_TYPE_REFERENCE;
+import static com.example.dictionary.utils.DictionaryUtils.ACCOUNT;
+import static com.example.dictionary.utils.DictionaryUtils.BANK;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.when;
 
 public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
 
     @Autowired
     protected TestRestTemplate restTemplate;
 
+    @Autowired
+    private AuthControllerFeign authControllerFeign;
+
     @Test
-    public void create_bank_returnCorrectBank() {
-        DictionaryBankDto dictionaryBankDto = getBankDto();
+    public void createAndGetEntity() {
+        DictionaryBankDto dictionaryBankDto = getDictionaryBankDto();
+
         HttpEntity<?> request = new HttpEntity<>(dictionaryBankDto, getHeaders());
 
         ResponseEntity<Long> createdBank = restTemplate.exchange(
-                API_PREFIX + DICTIONARY + "/create",
+                BANK + "/create",
                 HttpMethod.POST,
                 request,
                 ID_TYPE_REFERENCE
         );
-        var idBank = createdBank.getBody();
-        HttpEntity<?> requestSelect = new HttpEntity<>(getHeaders());
+
+        assertThat(createdBank.getBody()).isNotNull();
+        Long id = createdBank.getBody();
+        assertThat(id).isNotNull();
+
+        HttpEntity<?> request2 = new HttpEntity<>(getHeaders());
+
         var selectedBank = restTemplate.exchange(
-                API_PREFIX + DICTIONARY + "/{id}",
+                BANK + "/{id}",
                 HttpMethod.GET,
-                requestSelect,
+                request2,
                 DICTIONARY_BANK_TYPE_REFERENCE,
-                idBank
+                id
         );
 
-        assertThat(idBank).isNotNull();
-        var selectedBankDto = selectedBank.getBody();
-        assertThat(selectedBankDto.getAddress()).isEqualTo(dictionaryBankDto.getAddress());
-        assertThat(selectedBankDto.getBic()).isEqualTo(dictionaryBankDto.getBic());
-        assertThat(selectedBankDto.getName()).isEqualTo(dictionaryBankDto.getName());
+        DictionaryBankDto bankBody = selectedBank.getBody();
+        assertThat(bankBody).isNotNull();
+        assertThat(bankBody.getAddress()).isEqualTo(dictionaryBankDto.getAddress());
+        assertThat(bankBody.getBic()).isEqualTo(dictionaryBankDto.getBic());
+        assertThat(bankBody.getName()).isEqualTo(dictionaryBankDto.getName());
     }
 
     @Test
-    public void create_account_returnCorrectAccount() {
-        DictionaryAccountDto dictionaryAccountDto = getDictionaryAccountDto();
-        HttpEntity<?> request = new HttpEntity<>(dictionaryAccountDto, getHeaders());
-        HttpEntity<?> requestSelect = new HttpEntity<>(getHeaders());
+    public void transferMoneyFromOneAccountToAnother() {
+        var accounts = createAccountsAndBank();
 
-        ResponseEntity<Long> createdAccount = restTemplate.exchange(
-                API_PREFIX + DICTIONARY + API_PREFIX + ACCOUNT + "/create",
+        var accountNumberIvanov = accounts.getLeft().getAccountNumber();
+        var accountNumberNotIvanov = accounts.getRight().getAccountNumber();
+
+        var transferAccountDto = new TransferAccountDto()
+                .setWithdrawFromAccountNumber(accountNumberNotIvanov)
+                .setDepositIntoAccountNumber(accountNumberIvanov)
+                .setSumm(20.00);
+
+        var transferResponse = restTemplate.exchange(
+                ACCOUNT + "/transfer",
                 HttpMethod.POST,
-                request,
+                new HttpEntity<>(transferAccountDto, getHeaders()),
+                ACCOUNT_TYPE_REFERENCE
+        );
+
+        assertThat(transferResponse.getBody()).isNotNull();
+        var balanceIvanov = transferResponse.getBody().getBalance();
+        assertThat(balanceIvanov).isEqualTo(20.00);
+
+        var notIvanov = restTemplate.exchange(
+                ACCOUNT + "/{id}",
+                HttpMethod.GET,
+                new HttpEntity<>(getHeaders()),
+                ACCOUNT_TYPE_REFERENCE,
+                accounts.getRight().getId()
+        );
+
+        assertThat(notIvanov.getBody()).isNotNull();
+        var balanceNotIvanov = notIvanov.getBody().getBalance();
+        assertThat(balanceNotIvanov).isEqualTo(30.00);
+    }
+
+    private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {
+        DictionaryBankDto dictionaryBankDto = getDictionaryBankDto();
+
+        var clientIvanov = getClientDto("Иванов", "Иван", "Иванович", "644901001", 1L);
+        var clientNotIvanov = getClientDto("НеИванов", "НеИван", "НеИванович", "644901002", 2L);
+
+        var createdBank = restTemplate.exchange(
+                BANK + "/create",
+                HttpMethod.POST,
+                new HttpEntity<>(dictionaryBankDto, getHeaders()),
                 ID_TYPE_REFERENCE
         );
-        var selectedAccount = restTemplate.exchange(
-                API_PREFIX + DICTIONARY + API_PREFIX + ACCOUNT + "/{id}",
-                HttpMethod.GET,
-                requestSelect,
-                DICTIONARY_ACCOUNT_TYPE_REFERENCE,
-                createdAccount.getBody()
+
+        assertThat(createdBank.getBody()).isNotNull();
+        var id = createdBank.getBody();
+        assertThat(id).isNotNull();
+
+        when(authControllerFeign.findClientByInn("auth", clientIvanov.getInn())).thenReturn(ResponseEntity.ok(clientIvanov));
+        when(authControllerFeign.findClientByInn("auth", clientNotIvanov.getInn())).thenReturn(ResponseEntity.ok(clientNotIvanov));
+
+        var createAccountIvanov = new CreateAccountDto()
+                .setBic(dictionaryBankDto.getBic())
+                .setInn(clientIvanov.getInn());
+
+        var createAccountNotIvanov = new CreateAccountDto()
+                .setBic(dictionaryBankDto.getBic())
+                .setInn(clientNotIvanov.getInn());
+
+        var createdAccountIvanov = restTemplate.exchange(
+                ACCOUNT + "/create",
+                HttpMethod.POST,
+                new HttpEntity<>(createAccountIvanov, getHeaders()),
+                ACCOUNT_TYPE_REFERENCE
         );
 
-        assertThat(createdAccount.getBody()).isNotNull();
-        DictionaryBankDto bankDto = getDictionaryBankDto();
-        DictionaryAccountDto accountDto = selectedAccount.getBody();
-        assertThat(accountDto.getAccountStatus()).isEqualTo(dictionaryAccountDto.getAccountStatus());
-        assertThat(accountDto.getAccountNumber()).isEqualTo(dictionaryAccountDto.getAccountNumber());
-        assertThat(accountDto.getClientId()).isEqualTo(dictionaryAccountDto.getClientId());
-        assertThat(accountDto.getBank().getId()).isEqualTo(bankDto.getId());
-        assertThat(accountDto.getBank().getName()).isEqualTo(bankDto.getName());
-        assertThat(accountDto.getBank().getAddress()).isEqualTo(bankDto.getAddress());
-        assertThat(accountDto.getBank().getBic()).isEqualTo(bankDto.getBic());
+        assertThat(createdAccountIvanov.getBody()).isNotNull();
+        var accountId = createdAccountIvanov.getBody().getId();
+        assertThat(accountId).isNotNull();
+
+        var createdAccountNotIvanov = restTemplate.exchange(
+                ACCOUNT + "/create",
+                HttpMethod.POST,
+                new HttpEntity<>(createAccountNotIvanov, getHeaders()),
+                ACCOUNT_TYPE_REFERENCE
+        );
+
+        assertThat(createdAccountNotIvanov.getBody()).isNotNull();
+        var accountId2 = createdAccountNotIvanov.getBody().getId();
+        assertThat(accountId2).isNotNull();
+
+        var accountNumberIvanov = createdAccountIvanov.getBody().getAccountNumber();
+        var accountNumberNotIvanov = createdAccountNotIvanov.getBody().getAccountNumber();
+
+        var depositWithdrawAccountDto = new DepositWithdrawAccountDto()
+                .setAccountNumber(accountNumberNotIvanov)
+                .setSumm(50.00);
+
+        var depositedAccount = restTemplate.exchange(
+                ACCOUNT + "/deposit",
+                HttpMethod.POST,
+                new HttpEntity<>(depositWithdrawAccountDto, getHeaders()),
+                ACCOUNT_TYPE_REFERENCE
+        );
+
+        assertThat(depositedAccount.getBody()).isNotNull();
+        var balance = depositedAccount.getBody().getBalance();
+        assertThat(balance).isEqualTo(50.00);
+
+        return Pair.of(createdAccountIvanov.getBody(), createdAccountNotIvanov.getBody());
     }
 
-    @Nullable
+    private ClientDto getClientDto(String firstName, String lastName, String surName, String inn, Long id) {
+        return new ClientDto()
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setSurName(surName)
+                .setInn(inn)
+                .setId(id);
+    }
+
     private DictionaryBankDto getDictionaryBankDto() {
-        HttpEntity<?> requestForBank = new HttpEntity<>(getHeaders());
-        var selectedBank = restTemplate.exchange(
-                API_PREFIX + DICTIONARY + "/{id}",
-                HttpMethod.GET,
-                requestForBank,
-                DICTIONARY_BANK_TYPE_REFERENCE,
-                1
-        );
-        return selectedBank.getBody();
-    }
-
-    private DictionaryAccountDto getDictionaryAccountDto() {
-        DictionaryBankDto bankDto = getDictionaryBankDto();
-        return new DictionaryAccountDto()
-                .setAccountNumber(1234567891234567891L)
-                .setClientId(123L)
-                .setAccountStatus(StatusAccountDto.ACTIVE)
-                .setBank(bankDto);
-    }
-
-    private DictionaryBankDto getBankDto() {
-        return new DictionaryBankDto()
+        var dictionaryBankDto = new DictionaryBankDto()
                 .setAddress("Россия г.Рязань, ул.Букашкина 7")
-                .setBic("044525733")
+                .setBic(new Random().ints(9, 0, 9)
+                        .mapToObj(Integer::toString).collect(Collectors.joining()))
                 .setName("Омега Банк");
+        return dictionaryBankDto;
     }
 }
