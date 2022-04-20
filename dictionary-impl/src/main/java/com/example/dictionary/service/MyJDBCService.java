@@ -1,9 +1,9 @@
 package com.example.dictionary.service;
 
-import com.example.dictionary.domain.entity.account.Account;
+import com.example.dictionary.api.dto.DictionaryAccountDto;
 
 import java.util.ArrayList;
 
 public interface MyJDBCService {
-    ArrayList<Account> getByIdWithJDBC(Long id);
+    ArrayList<DictionaryAccountDto> getByIdWithJDBC(Long id);
 }
