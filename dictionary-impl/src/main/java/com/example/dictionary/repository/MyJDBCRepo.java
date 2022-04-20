@@ -13,23 +13,17 @@ import java.util.ArrayList;
 
 @Repository
 public class MyJDBCRepo {
-    private final String _url;
-    private final String _username;
-    private final String _password;
-
-    public MyJDBCRepo(@Value("${spring.datasource.url}") String url,
-                      @Value("${spring.datasource.username}") String username,
-                      @Value("${spring.datasource.password}") String password) {
-
-        _url = url;
-        _username = username;
-        _password = password;
-    }
+    @Value("${spring.datasource.url}")
+    String url;
+    @Value("${spring.datasource.username}")
+    String username;
+    @Value("${spring.datasource.password}")
+    String password;
 
     public ArrayList<DictionaryAccountDto> getAccountsByBankIdWithJDBC(Long id) {
         var accounts = new ArrayList<DictionaryAccountDto>();
         try {
-            try (Connection connection = DriverManager.getConnection(_url, _username, _password);
+            try (Connection connection = DriverManager.getConnection(url, username, password);
                  PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM accounts WHERE bank_id = ?")) {
                 preparedStatement.setLong(1, id);
                 ResultSet resultSet = preparedStatement.executeQuery();
