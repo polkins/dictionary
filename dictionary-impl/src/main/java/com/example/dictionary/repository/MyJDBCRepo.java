@@ -1,8 +1,7 @@
 package com.example.dictionary.repository;
 
 import com.example.dictionary.api.dto.DictionaryAccountDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -14,19 +13,24 @@ import java.util.ArrayList;
 
 @Repository
 public class MyJDBCRepo {
-    @Autowired
-    private Environment environment;
+    private final String _url;
+    private final String _username;
+    private final String _password;
+
+    public MyJDBCRepo(@Value("${spring.datasource.url}") String url,
+                      @Value("${spring.datasource.username}") String username,
+                      @Value("${spring.datasource.password}") String password) {
+
+        _url = url;
+        _username = username;
+        _password = password;
+    }
 
     public ArrayList<DictionaryAccountDto> getAccountsByBankIdWithJDBC(Long id) {
         var accounts = new ArrayList<DictionaryAccountDto>();
         try {
-            var url = environment.getProperty("spring.datasource.url");
-            var username = environment.getProperty("spring.datasource.username");
-            var password = environment.getProperty("spring.datasource.password");
-
-            Connection connection = DriverManager.getConnection(url, username, password);
-
-            try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM accounts WHERE bank_id = ?")) {
+            try (Connection connection = DriverManager.getConnection(_url, _username, _password);
+                 PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM accounts WHERE bank_id = ?")) {
                 preparedStatement.setLong(1, id);
                 ResultSet resultSet = preparedStatement.executeQuery();
 
