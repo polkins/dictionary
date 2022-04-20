@@ -3,6 +3,7 @@ package com.example.dictionary.common;
 import com.example.TestConfiguration;
 import com.example.dictionary.controller.DictionaryBankController;
 import com.example.dictionary.service.BankService;
+import com.example.dictionary.service.MyJDBCService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,9 @@ public abstract class AbstractIntegrationTest extends PostgresIntegrationTest {
 
     @Autowired
     protected BankService bankService;
+
+    @Autowired
+    protected MyJDBCService myJDBCService;
 
     @BeforeMethod
     public void setUp() {

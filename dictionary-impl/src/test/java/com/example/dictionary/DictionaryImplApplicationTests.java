@@ -105,6 +105,30 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(balanceNotIvanov).isEqualTo(30.00);
     }
 
+    @Test
+    public void getByIdWithJDBC(){
+        var accounts = createAccountsAndBank();
+
+        var accountNumberIvanov = accounts.getLeft();
+        var accountNumberNotIvanov = accounts.getRight();
+
+        var bankId = accountNumberIvanov.getBankId();
+
+        var jdbcAccounts = myJDBCService.getByIdWithJDBC(bankId);
+
+        assertThat(jdbcAccounts.size()).isEqualTo(2);
+
+        assertThat(jdbcAccounts.get(0).getId()).isEqualTo(accountNumberIvanov.getId());
+        assertThat(jdbcAccounts.get(0).getAccountNumber()).isEqualTo(accountNumberIvanov.getAccountNumber());
+        assertThat(jdbcAccounts.get(0).getBankId()).isEqualTo(accountNumberIvanov.getBankId());
+        assertThat(jdbcAccounts.get(0).getClientId()).isEqualTo(accountNumberIvanov.getClientId());
+
+        assertThat(jdbcAccounts.get(1).getId()).isEqualTo(accountNumberNotIvanov.getId());
+        assertThat(jdbcAccounts.get(1).getAccountNumber()).isEqualTo(accountNumberNotIvanov.getAccountNumber());
+        assertThat(jdbcAccounts.get(1).getBankId()).isEqualTo(accountNumberNotIvanov.getBankId());
+        assertThat(jdbcAccounts.get(1).getClientId()).isEqualTo(accountNumberNotIvanov.getClientId());
+    }
+
     private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {
         DictionaryBankDto dictionaryBankDto = getDictionaryBankDto();
 
