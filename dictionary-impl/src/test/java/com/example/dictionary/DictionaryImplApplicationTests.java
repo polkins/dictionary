@@ -1,11 +1,10 @@
 package com.example.dictionary;
 
-import com.example.dictionary.api.dto.CreateAccountDto;
-import com.example.dictionary.api.dto.DepositWithdrawAccountDto;
-import com.example.dictionary.api.dto.DictionaryAccountDto;
-import com.example.dictionary.api.dto.DictionaryBankDto;
-import com.example.dictionary.api.dto.TransferAccountDto;
+import com.example.dictionary.api.dto.*;
 import com.example.dictionary.common.AbstractIntegrationTest;
+import com.example.dictionary.domain.entity.employee.Employee;
+import com.example.dictionary.domain.entity.employee.EmployeeType;
+import com.example.dictionary.mapper.EmployeeMapper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -127,6 +126,36 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(jdbcAccounts.get(1).getAccountNumber()).isEqualTo(accountNumberNotIvanov.getAccountNumber());
         assertThat(jdbcAccounts.get(1).getBankId()).isEqualTo(accountNumberNotIvanov.getBankId());
         assertThat(jdbcAccounts.get(1).getClientId()).isEqualTo(accountNumberNotIvanov.getClientId());
+    }
+
+    @Test
+    public void mapEmployeeToDto(){
+        var employee = new Employee();
+        employee.setId(1L);
+        employee.setFirstName("Иван");
+        employee.setLastName("Иванов");
+        employee.setType(EmployeeType.Economist);
+
+        var employeeDto = EmployeeMapper.INSTANCE.toDto(employee);
+
+        assertThat(employeeDto.getName()).isEqualTo(employee.getFirstName());
+        assertThat(employeeDto.getSurname()).isEqualTo(employee.getLastName());
+        assertThat(employeeDto.getType()).isEqualTo(employee.getType().toString());
+    }
+
+    @Test
+    public void mapEmployeeDtoToModel(){
+        var employeeDto = new EmployeeDto();
+        employeeDto.setName("Иван");
+        employeeDto.setSurname("Иванов");
+        employeeDto.setType(EmployeeType.Manager.toString());
+
+        var employee = EmployeeMapper.INSTANCE.toModel(employeeDto);
+
+        assertThat(employee.getId()).isNull();
+        assertThat(employee.getFirstName()).isEqualTo(employeeDto.getName());
+        assertThat(employee.getLastName()).isEqualTo(employeeDto.getSurname());
+        assertThat(employee.getType()).isEqualTo(EmployeeType.Manager);
     }
 
     private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {
