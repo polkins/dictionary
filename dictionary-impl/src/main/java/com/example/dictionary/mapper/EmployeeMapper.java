@@ -4,12 +4,11 @@ import com.example.dictionary.api.dto.EmployeeDto;
 import com.example.dictionary.domain.entity.employee.Employee;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
-@Mapper
+import java.util.List;
+
+@Mapper(uses = DictionaryDtoBankMapper.class)
 public interface EmployeeMapper {
-    EmployeeMapper INSTANCE = Mappers.getMapper(EmployeeMapper.class);
-
     @Mapping(source = "firstName", target = "name")
     @Mapping(source = "lastName", target = "surname")
     EmployeeDto toDto(Employee employee);
@@ -18,4 +17,13 @@ public interface EmployeeMapper {
     @Mapping(source = "surname", target = "lastName")
     @Mapping(target = "id", ignore = true)
     Employee toModel(EmployeeDto employeeDto);
+
+    @Mapping(source = "firstName", target = "name")
+    @Mapping(source = "lastName", target = "surname")
+    List<EmployeeDto> toDto(List<Employee> employeeList);
+
+    @Mapping(source = "name", target = "firstName")
+    @Mapping(source = "surname", target = "lastName")
+    @Mapping(target = "id", ignore = true)
+    List<Employee> toModel(List<EmployeeDto> employeeDtoList);
 }

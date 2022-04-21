@@ -1,5 +1,6 @@
 package com.example.dictionary.domain.entity.employee;
 
+import com.example.dictionary.domain.entity.bank.Bank;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -26,4 +27,8 @@ public class Employee {
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     public EmployeeType type;
+
+    @OneToOne
+    @JoinColumn(name = "bank_id")
+    public Bank bank;
 }
