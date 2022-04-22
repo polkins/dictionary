@@ -138,7 +138,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         employee.setId(1L);
         employee.setFirstName("Иван");
         employee.setLastName("Иванов");
-        employee.setType(EmployeeType.Economist);
+        employee.setType(EmployeeType.ECONOMIST);
         employee.setBank(bank);
 
         var employeeDto = employeeMapper.toDto(employee);
@@ -164,7 +164,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         var employeeDto = new EmployeeDto();
         employeeDto.setName("Иван");
         employeeDto.setSurname("Иванов");
-        employeeDto.setType(EmployeeType.Manager.toString());
+        employeeDto.setType(EmployeeType.MANAGER.toString());
         employeeDto.setBank(bankDto);
         employeeDto.setDescription(description);
 
@@ -173,7 +173,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(employee.getId()).isNull();
         assertThat(employee.getFirstName()).isEqualTo(employeeDto.getName());
         assertThat(employee.getLastName()).isEqualTo(employeeDto.getSurname());
-        assertThat(employee.getType()).isEqualTo(EmployeeType.Manager);
+        assertThat(employee.getType()).isEqualTo(EmployeeType.MANAGER);
         assertThat(employee.getDescription()).isEqualTo(employeeHandler.ChangeDescription(description));
 
         assertThat(employee.getBank()).isNotNull();
@@ -193,7 +193,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         employee.setId(1L);
         employee.setFirstName("Иван");
         employee.setLastName("Иванов");
-        employee.setType(EmployeeType.Economist);
+        employee.setType(EmployeeType.ECONOMIST);
         employee.setBank(bank);
 
         var employeeList = new ArrayList<Employee>();
@@ -223,7 +223,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         var employeeDto = new EmployeeDto();
         employeeDto.setName("Иван");
         employeeDto.setSurname("Иванов");
-        employeeDto.setType(EmployeeType.Manager.toString());
+        employeeDto.setType(EmployeeType.MANAGER.toString());
         employeeDto.setBank(bankDto);
 
         var employeeDtoList = new ArrayList<EmployeeDto>();
@@ -236,7 +236,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(employeeList.get(0).getId()).isNull();
         assertThat(employeeList.get(0).getFirstName()).isEqualTo(employeeDto.getName());
         assertThat(employeeList.get(0).getLastName()).isEqualTo(employeeDto.getSurname());
-        assertThat(employeeList.get(0).getType()).isEqualTo(EmployeeType.Manager);
+        assertThat(employeeList.get(0).getType()).isEqualTo(EmployeeType.MANAGER);
 
         assertThat(employeeList.get(0).getBank()).isNotNull();
         assertThat(employeeList.get(0).getBank().getId()).isEqualTo(bankDto.getId());
