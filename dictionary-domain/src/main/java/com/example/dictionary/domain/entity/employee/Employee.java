@@ -9,8 +9,8 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@Accessors(chain = true)
 @Entity
+@Accessors(chain = true)
 @Table(name = "employees")
 public class Employee {
     @Id
