@@ -11,4 +11,5 @@ public class EmployeeDto {
     public String surname;
     public String type;
     public DictionaryBankDto bank;
+    public String description;
 }

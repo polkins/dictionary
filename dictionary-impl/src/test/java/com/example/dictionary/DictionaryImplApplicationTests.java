@@ -160,11 +160,13 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         bankDto.setName("БаБанк");
         bankDto.setBic("5555");
 
+        final String description = "xxx-xxx";
         var employeeDto = new EmployeeDto();
         employeeDto.setName("Иван");
         employeeDto.setSurname("Иванов");
         employeeDto.setType(EmployeeType.Manager.toString());
         employeeDto.setBank(bankDto);
+        employeeDto.setDescription(description);
 
         var employee = employeeMapper.toModel(employeeDto);
 
@@ -172,6 +174,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(employee.getFirstName()).isEqualTo(employeeDto.getName());
         assertThat(employee.getLastName()).isEqualTo(employeeDto.getSurname());
         assertThat(employee.getType()).isEqualTo(EmployeeType.Manager);
+        assertThat(employee.getDescription()).isEqualTo(employeeHandler.ChangeDescription(description));
 
         assertThat(employee.getBank()).isNotNull();
         assertThat(employee.getBank().getId()).isEqualTo(bankDto.getId());

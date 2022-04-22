@@ -31,4 +31,7 @@ public class Employee {
     @OneToOne
     @JoinColumn(name = "bank_id")
     public Bank bank;
+
+    @Column(name = "description")
+    public String description;
 }
