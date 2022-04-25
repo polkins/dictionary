@@ -1,11 +1,10 @@
 package com.example.dictionary;
 
-import com.example.dictionary.api.dto.CreateAccountDto;
-import com.example.dictionary.api.dto.DepositWithdrawAccountDto;
-import com.example.dictionary.api.dto.DictionaryAccountDto;
-import com.example.dictionary.api.dto.DictionaryBankDto;
-import com.example.dictionary.api.dto.TransferAccountDto;
+import com.example.dictionary.api.dto.*;
 import com.example.dictionary.common.AbstractIntegrationTest;
+import com.example.dictionary.domain.entity.bank.Bank;
+import com.example.dictionary.domain.entity.employee.Employee;
+import com.example.dictionary.domain.entity.employee.EmployeeType;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -16,12 +15,11 @@ import org.testng.annotations.Test;
 import ru.nonsense.auth.client.api.dto.ClientDto;
 import ru.nonsense.auth.client.feign.AuthControllerFeign;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static com.example.dictionary.ParametrizedTypeReferenceHolder.ACCOUNT_TYPE_REFERENCE;
-import static com.example.dictionary.ParametrizedTypeReferenceHolder.DICTIONARY_BANK_TYPE_REFERENCE;
-import static com.example.dictionary.ParametrizedTypeReferenceHolder.ID_TYPE_REFERENCE;
+import static com.example.dictionary.ParametrizedTypeReferenceHolder.*;
 import static com.example.dictionary.utils.DictionaryUtils.ACCOUNT;
 import static com.example.dictionary.utils.DictionaryUtils.BANK;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -127,6 +125,123 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(jdbcAccounts.get(1).getAccountNumber()).isEqualTo(accountNumberNotIvanov.getAccountNumber());
         assertThat(jdbcAccounts.get(1).getBankId()).isEqualTo(accountNumberNotIvanov.getBankId());
         assertThat(jdbcAccounts.get(1).getClientId()).isEqualTo(accountNumberNotIvanov.getClientId());
+    }
+
+    @Test
+    public void mapEmployeeToDto(){
+        var bank = new Bank();
+        bank.setId(1L);
+        bank.setName("БаБанк");
+        bank.setBic("5555");
+
+        var employee = new Employee();
+        employee.setId(1L);
+        employee.setFirstName("Иван");
+        employee.setLastName("Иванов");
+        employee.setType(EmployeeType.ECONOMIST);
+        employee.setBank(bank);
+
+        var employeeDto = employeeMapper.toDto(employee);
+
+        assertThat(employeeDto.getName()).isEqualTo(employee.getFirstName());
+        assertThat(employeeDto.getSurname()).isEqualTo(employee.getLastName());
+        assertThat(employeeDto.getType()).isEqualTo(employee.getType().toString());
+
+        assertThat(employeeDto.getBank()).isNotNull();
+        assertThat(employeeDto.getBank().getId()).isEqualTo(bank.getId());
+        assertThat(employeeDto.getBank().getName()).isEqualTo(bank.getName());
+        assertThat(employeeDto.getBank().getBic()).isEqualTo(bank.getBic());
+    }
+
+    @Test
+    public void mapEmployeeDtoToModel(){
+        var bankDto = new DictionaryBankDto();
+        bankDto.setId(1L);
+        bankDto.setName("БаБанк");
+        bankDto.setBic("5555");
+
+        final String description = "xxx-xxx";
+        var employeeDto = new EmployeeDto();
+        employeeDto.setName("Иван");
+        employeeDto.setSurname("Иванов");
+        employeeDto.setType(EmployeeType.MANAGER.toString());
+        employeeDto.setBank(bankDto);
+        employeeDto.setDescription(description);
+
+        var employee = employeeMapper.toModel(employeeDto);
+
+        assertThat(employee.getId()).isNull();
+        assertThat(employee.getFirstName()).isEqualTo(employeeDto.getName());
+        assertThat(employee.getLastName()).isEqualTo(employeeDto.getSurname());
+        assertThat(employee.getType()).isEqualTo(EmployeeType.MANAGER);
+        assertThat(employee.getDescription()).isEqualTo(employeeHandler.ChangeDescription(description));
+
+        assertThat(employee.getBank()).isNotNull();
+        assertThat(employee.getBank().getId()).isEqualTo(bankDto.getId());
+        assertThat(employee.getBank().getName()).isEqualTo(bankDto.getName());
+        assertThat(employee.getBank().getBic()).isEqualTo(bankDto.getBic());
+    }
+
+    @Test
+    public void mapEmployeeToDtoList(){
+        var bank = new Bank();
+        bank.setId(1L);
+        bank.setName("БаБанк");
+        bank.setBic("5555");
+
+        var employee = new Employee();
+        employee.setId(1L);
+        employee.setFirstName("Иван");
+        employee.setLastName("Иванов");
+        employee.setType(EmployeeType.ECONOMIST);
+        employee.setBank(bank);
+
+        var employeeList = new ArrayList<Employee>();
+        employeeList.add(employee);
+
+        var employeeDtoList = employeeMapper.toDto(employeeList);
+
+        assertThat(employeeDtoList.size()).isEqualTo(1);
+
+        assertThat(employeeDtoList.get(0).getName()).isEqualTo(employee.getFirstName());
+        assertThat(employeeDtoList.get(0).getSurname()).isEqualTo(employee.getLastName());
+        assertThat(employeeDtoList.get(0).getType()).isEqualTo(employee.getType().toString());
+
+        assertThat(employeeDtoList.get(0).getBank()).isNotNull();
+        assertThat(employeeDtoList.get(0).getBank().getId()).isEqualTo(bank.getId());
+        assertThat(employeeDtoList.get(0).getBank().getName()).isEqualTo(bank.getName());
+        assertThat(employeeDtoList.get(0).getBank().getBic()).isEqualTo(bank.getBic());
+    }
+
+    @Test
+    public void mapEmployeeDtoToModelList(){
+        var bankDto = new DictionaryBankDto();
+        bankDto.setId(1L);
+        bankDto.setName("БаБанк");
+        bankDto.setBic("5555");
+
+        var employeeDto = new EmployeeDto();
+        employeeDto.setName("Иван");
+        employeeDto.setSurname("Иванов");
+        employeeDto.setType(EmployeeType.MANAGER.toString());
+        employeeDto.setBank(bankDto);
+
+        var employeeDtoList = new ArrayList<EmployeeDto>();
+        employeeDtoList.add(employeeDto);
+
+        var employeeList = employeeMapper.toModel(employeeDtoList);
+
+        assertThat(employeeDtoList.size()).isEqualTo(1);
+
+        assertThat(employeeList.get(0).getId()).isNull();
+        assertThat(employeeList.get(0).getFirstName()).isEqualTo(employeeDto.getName());
+        assertThat(employeeList.get(0).getLastName()).isEqualTo(employeeDto.getSurname());
+        assertThat(employeeList.get(0).getType()).isEqualTo(EmployeeType.MANAGER);
+
+        assertThat(employeeList.get(0).getBank()).isNotNull();
+        assertThat(employeeList.get(0).getBank().getId()).isEqualTo(bankDto.getId());
+        assertThat(employeeList.get(0).getBank().getName()).isEqualTo(bankDto.getName());
+        assertThat(employeeList.get(0).getBank().getBic()).isEqualTo(bankDto.getBic());
     }
 
     private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {

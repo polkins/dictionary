@@ -2,6 +2,8 @@ package com.example.dictionary.common;
 
 import com.example.TestConfiguration;
 import com.example.dictionary.controller.DictionaryBankController;
+import com.example.dictionary.mapper.EmployeeMapper;
+import com.example.dictionary.mapper.qualifier.EmployeeHandler;
 import com.example.dictionary.service.BankService;
 import com.example.dictionary.service.MyJDBCService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,12 @@ public abstract class AbstractIntegrationTest extends PostgresIntegrationTest {
 
     @Autowired
     protected MyJDBCService myJDBCService;
+
+    @Autowired
+    protected EmployeeMapper employeeMapper;
+
+    @Autowired
+    protected EmployeeHandler employeeHandler;
 
     @BeforeMethod
     public void setUp() {
