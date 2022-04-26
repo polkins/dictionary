@@ -2,6 +2,8 @@ package com.example.dictionary;
 
 import com.example.dictionary.api.dto.*;
 import com.example.dictionary.common.AbstractIntegrationTest;
+import com.example.dictionary.domain.entity.associations.embeddable.Address;
+import com.example.dictionary.domain.entity.associations.embeddable.Parcel;
 import com.example.dictionary.domain.entity.associations.onetomany.Product;
 import com.example.dictionary.domain.entity.associations.onetomany.Store;
 import com.example.dictionary.domain.entity.associations.onetoone.Car;
@@ -300,6 +302,28 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(createdStore.getId()).isNotNull();
         assertThat(createdStore.getName()).isEqualTo(store.getName());
         assertThat(createdStore.getAddress()).isEqualTo(store.getAddress());
+    }
+
+    @Test
+    public void createParcel_Embeddable(){
+        var address = new Address();
+        address.setZipcode("33333");
+        address.setCity("г.Рязань");
+        address.setStreet("Почтовая");
+        var parcel = new Parcel();
+        parcel.setAddress(address);
+        parcel.setType("Заказное письмо");
+        parcel.setSize(1.0);
+
+        var createdParcel = parcelRepository.save(parcel);
+
+        assertThat(createdParcel).isNotNull();
+        assertThat(createdParcel.getType()).isEqualTo(parcel.getType());
+        assertThat(createdParcel.getSize()).isEqualTo(parcel.getSize());
+        assertThat(createdParcel.getAddress()).isNotNull();
+        assertThat(createdParcel.getAddress().getZipcode()).isEqualTo(address.getZipcode());
+        assertThat(createdParcel.getAddress().getCity()).isEqualTo(address.getCity());
+        assertThat(createdParcel.getAddress().getStreet()).isEqualTo(address.getStreet());
     }
 
     private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {
