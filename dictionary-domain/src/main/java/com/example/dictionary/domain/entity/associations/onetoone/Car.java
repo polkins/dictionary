@@ -18,7 +18,7 @@ public class Car {
 
     private String manufacturer;
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(optional = false)
     @JoinColumn(name = "engine_id")
     private Engine engine;
 }

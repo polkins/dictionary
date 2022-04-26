@@ -2,6 +2,8 @@ package com.example.dictionary;
 
 import com.example.dictionary.api.dto.*;
 import com.example.dictionary.common.AbstractIntegrationTest;
+import com.example.dictionary.domain.entity.associations.onetoone.Car;
+import com.example.dictionary.domain.entity.associations.onetoone.Engine;
 import com.example.dictionary.domain.entity.bank.Bank;
 import com.example.dictionary.domain.entity.employee.Employee;
 import com.example.dictionary.domain.entity.employee.EmployeeType;
@@ -242,6 +244,33 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(employeeList.get(0).getBank().getId()).isEqualTo(bankDto.getId());
         assertThat(employeeList.get(0).getBank().getName()).isEqualTo(bankDto.getName());
         assertThat(employeeList.get(0).getBank().getBic()).isEqualTo(bankDto.getBic());
+    }
+
+    @Test
+    public void createEngineAndCar_OneToOne(){
+        var engine = new Engine();
+        engine.setPower(123L);
+
+        var createdEngine = engineRepository.save(engine);
+
+        assertThat(createdEngine).isNotNull();
+        assertThat(createdEngine.getId()).isNotNull();
+        assertThat(createdEngine.getPower()).isEqualTo(engine.getPower());
+
+        var car = new Car();
+        car.setManufacturer("Kia Motors");
+        car.setModel("Rio Style");
+        car.setEngine(createdEngine);
+
+        var createdCar = carRepository.save(car);
+
+        assertThat(createdCar).isNotNull();
+        assertThat(createdCar.getId()).isNotNull();
+        assertThat(createdCar.getManufacturer()).isEqualTo(car.getManufacturer());
+        assertThat(createdCar.getModel()).isEqualTo(car.getModel());
+        assertThat(createdCar.getEngine()).isNotNull();
+        assertThat(createdEngine.getId()).isNotNull();
+        assertThat(createdEngine.getPower()).isEqualTo(engine.getPower());
     }
 
     private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {
