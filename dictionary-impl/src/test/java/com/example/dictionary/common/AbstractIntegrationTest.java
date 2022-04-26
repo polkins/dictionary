@@ -6,6 +6,8 @@ import com.example.dictionary.mapper.EmployeeMapper;
 import com.example.dictionary.mapper.qualifier.EmployeeHandler;
 import com.example.dictionary.repository.CarRepository;
 import com.example.dictionary.repository.EngineRepository;
+import com.example.dictionary.repository.ProductRepository;
+import com.example.dictionary.repository.StoreRepository;
 import com.example.dictionary.service.BankService;
 import com.example.dictionary.service.MyJDBCService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,12 @@ public abstract class AbstractIntegrationTest extends PostgresIntegrationTest {
 
     @Autowired
     protected CarRepository carRepository;
+
+    @Autowired
+    protected ProductRepository productRepository;
+
+    @Autowired
+    protected StoreRepository storeRepository;
 
     @BeforeMethod
     public void setUp() {

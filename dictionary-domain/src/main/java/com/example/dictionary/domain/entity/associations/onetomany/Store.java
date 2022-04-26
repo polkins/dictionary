@@ -19,6 +19,6 @@ public class Store {
 
     private String address;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "store")
     private List<Product> products;
 }

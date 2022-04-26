@@ -5,22 +5,19 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="create_car_table" author="Komarov_Sergey">
-        <preConditions onFail="MARK_RAN">
+    <changeSet id="create_store_table" author="Komarov_Sergey">
+        <preConditions>
             <not>
-                <tableExists tableName="cars"/>
+                <tableExists tableName="stores"/>
             </not>
         </preConditions>
 
-        <createTable tableName="cars">
+        <createTable tableName="stores">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="manufacturer" type="varchar(300)"/>
-            <column name="model" type="varchar(300)"/>
-            <column name="engine_id" type="bigint">
-                <constraints foreignKeyName="fk_cars_engines"/>
-            </column>
+            <column name="name" type="varchar(300)"/>
+            <column name="address" type="varchar(300)"/>
         </createTable>
     </changeSet>
 

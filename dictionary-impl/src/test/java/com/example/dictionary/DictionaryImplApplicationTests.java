@@ -2,6 +2,8 @@ package com.example.dictionary;
 
 import com.example.dictionary.api.dto.*;
 import com.example.dictionary.common.AbstractIntegrationTest;
+import com.example.dictionary.domain.entity.associations.onetomany.Product;
+import com.example.dictionary.domain.entity.associations.onetomany.Store;
 import com.example.dictionary.domain.entity.associations.onetoone.Car;
 import com.example.dictionary.domain.entity.associations.onetoone.Engine;
 import com.example.dictionary.domain.entity.bank.Bank;
@@ -18,6 +20,7 @@ import ru.nonsense.auth.client.api.dto.ClientDto;
 import ru.nonsense.auth.client.feign.AuthControllerFeign;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -271,6 +274,32 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(createdCar.getEngine()).isNotNull();
         assertThat(createdEngine.getId()).isNotNull();
         assertThat(createdEngine.getPower()).isEqualTo(engine.getPower());
+    }
+
+    @Test
+    public void createProductsAndStore_OneToMany_ManyToOne(){
+        var product = new Product();
+        product.setName("Молоко для избранных котиков");
+        product.setPrice(1450.0);
+
+        var createdProduct = productRepository.save(product);
+
+        assertThat(createdProduct).isNotNull();
+        assertThat(createdProduct.getId()).isNotNull();
+        assertThat(createdProduct.getName()).isEqualTo(product.getName());
+        assertThat(createdProduct.getPrice()).isEqualTo(product.getPrice());
+
+        var store = new Store();
+        store.setName("5");
+        store.setAddress("г.Продуктовый, ул. Молочная, д. 23");
+        store.setProducts(List.of(product));
+
+        var createdStore = storeRepository.save(store);
+
+        assertThat(createdStore).isNotNull();
+        assertThat(createdStore.getId()).isNotNull();
+        assertThat(createdStore.getName()).isEqualTo(store.getName());
+        assertThat(createdStore.getAddress()).isEqualTo(store.getAddress());
     }
 
     private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {
