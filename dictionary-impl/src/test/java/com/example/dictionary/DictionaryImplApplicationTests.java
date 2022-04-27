@@ -4,6 +4,8 @@ import com.example.dictionary.api.dto.*;
 import com.example.dictionary.common.AbstractIntegrationTest;
 import com.example.dictionary.domain.entity.associations.embeddable.Address;
 import com.example.dictionary.domain.entity.associations.embeddable.Parcel;
+import com.example.dictionary.domain.entity.associations.manytomany.House;
+import com.example.dictionary.domain.entity.associations.manytomany.Owner;
 import com.example.dictionary.domain.entity.associations.onetomany.Product;
 import com.example.dictionary.domain.entity.associations.onetomany.Store;
 import com.example.dictionary.domain.entity.associations.onetoone.Car;
@@ -324,6 +326,61 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(createdParcel.getAddress().getZipcode()).isEqualTo(address.getZipcode());
         assertThat(createdParcel.getAddress().getCity()).isEqualTo(address.getCity());
         assertThat(createdParcel.getAddress().getStreet()).isEqualTo(address.getStreet());
+    }
+
+    @Test
+    public void createHouseAndOwner_ManyToMany(){
+        var house = new House();
+        house.setAddress("г.Рязань, ул. Веселых молочников");
+
+        var createdHouse = houseRepository.save(house);
+
+        assertThat(createdHouse).isNotNull();
+        assertThat(createdHouse.getId()).isNotNull();
+        assertThat(createdHouse.getAddress()).isEqualTo(house.getAddress());
+
+        var owner = new Owner();
+        owner.setFirstName("Петр");
+        owner.setLastName("Петров");
+        owner.setHouses(List.of(createdHouse));
+
+        var createdOwner = ownerRepository.save(owner);
+
+        assertThat(createdOwner).isNotNull();
+        assertThat(createdOwner.getId()).isNotNull();
+        assertThat(createdOwner.getFirstName()).isEqualTo(owner.getFirstName());
+        assertThat(createdOwner.getLastName()).isEqualTo(owner.getLastName());
+        assertThat(createdOwner.getHouses()).isNotNull();
+        assertThat(createdOwner.getHouses().size()).isEqualTo(1);
+        assertThat(createdOwner.getHouses().get(0).getAddress()).isEqualTo(house.getAddress());
+    }
+
+    @Test
+    public void createOwnerAndHouse_ManyToMany(){
+        var owner = new Owner();
+        owner.setFirstName("Петр");
+        owner.setLastName("Петров");
+
+        var createdOwner = ownerRepository.save(owner);
+
+        assertThat(createdOwner).isNotNull();
+        assertThat(createdOwner.getId()).isNotNull();
+        assertThat(createdOwner.getFirstName()).isEqualTo(owner.getFirstName());
+        assertThat(createdOwner.getLastName()).isEqualTo(owner.getLastName());
+
+        var house = new House();
+        house.setAddress("г.Рязань, ул. Веселых молочников");
+        house.setOwners(List.of(createdOwner));
+
+        var createdHouse = houseRepository.save(house);
+
+        assertThat(createdHouse).isNotNull();
+        assertThat(createdHouse.getId()).isNotNull();
+        assertThat(createdHouse.getAddress()).isEqualTo(house.getAddress());
+        assertThat(createdHouse.getOwners()).isNotNull();
+        assertThat(createdHouse.getOwners().size()).isEqualTo(1);
+        assertThat(createdHouse.getOwners().get(0).getFirstName()).isEqualTo(owner.getFirstName());
+        assertThat(createdHouse.getOwners().get(0).getLastName()).isEqualTo(owner.getLastName());
     }
 
     private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {

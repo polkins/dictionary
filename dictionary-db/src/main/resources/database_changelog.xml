@@ -16,5 +16,8 @@
     <include file="db/changelog.v3.0/v3.0_create_product_table.xml" relativeToChangelogFile="true"/>
     <include file="db/changelog.v3.0/v3.1_create_store_table.xml" relativeToChangelogFile="true"/>
     <include file="db/changelog.v4.0/v4.0_create_parcel_table.xml" relativeToChangelogFile="true"/>
+    <include file="db/changelog.v5.0/v5.0_create_owner_table.xml" relativeToChangelogFile="true"/>
+    <include file="db/changelog.v5.0/v5.1_create_house_table.xml" relativeToChangelogFile="true"/>
+    <include file="db/changelog.v5.0/v5.2_create_owner_house_table.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

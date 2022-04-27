@@ -53,6 +53,12 @@ public abstract class AbstractIntegrationTest extends PostgresIntegrationTest {
     @Autowired
     protected ParcelRepository parcelRepository;
 
+    @Autowired
+    protected OwnerRepository ownerRepository;
+
+    @Autowired
+    protected HouseRepository houseRepository;
+
     @BeforeMethod
     public void setUp() {
     }
