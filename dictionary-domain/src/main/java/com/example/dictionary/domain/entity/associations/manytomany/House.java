@@ -1,5 +1,6 @@
 package com.example.dictionary.domain.entity.associations.manytomany;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "houses")
+@EqualsAndHashCode(of = "id")
 public class House {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
