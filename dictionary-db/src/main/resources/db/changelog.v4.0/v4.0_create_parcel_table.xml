@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create_parcel_table" author="Komarov_Sergey">
+        <preConditions>
+            <not>
+                <tableExists tableName="parcels"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="parcels">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="size" type="float"/>
+            <column name="type" type="varchar(100)"/>
+            <column name="zipcode" type="varchar(5)"/>
+            <column name="city" type="varchar(100)"/>
+            <column name="street" type="varchar(100)"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

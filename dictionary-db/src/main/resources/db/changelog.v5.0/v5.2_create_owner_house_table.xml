@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create_owner_house_table" author="Komarov_Sergey">
+        <preConditions>
+            <not>
+                <tableExists tableName="owner_house"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="owner_house">
+            <column name="house_id" type="bigint">
+                <constraints foreignKeyName="fk_house_owner" nullable="false"/>
+            </column>
+            <column name="owner_id" type="bigint">
+                <constraints foreignKeyName="fk_owner_house" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

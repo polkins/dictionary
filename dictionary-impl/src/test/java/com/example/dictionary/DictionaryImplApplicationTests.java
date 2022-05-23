@@ -2,6 +2,14 @@ package com.example.dictionary;
 
 import com.example.dictionary.api.dto.*;
 import com.example.dictionary.common.AbstractIntegrationTest;
+import com.example.dictionary.domain.entity.associations.embeddable.Address;
+import com.example.dictionary.domain.entity.associations.embeddable.Parcel;
+import com.example.dictionary.domain.entity.associations.manytomany.House;
+import com.example.dictionary.domain.entity.associations.manytomany.Owner;
+import com.example.dictionary.domain.entity.associations.onetomany.Product;
+import com.example.dictionary.domain.entity.associations.onetomany.Store;
+import com.example.dictionary.domain.entity.associations.onetoone.Car;
+import com.example.dictionary.domain.entity.associations.onetoone.Engine;
 import com.example.dictionary.domain.entity.bank.Bank;
 import com.example.dictionary.domain.entity.employee.Employee;
 import com.example.dictionary.domain.entity.employee.EmployeeType;
@@ -16,6 +24,7 @@ import ru.nonsense.auth.client.api.dto.ClientDto;
 import ru.nonsense.auth.client.feign.AuthControllerFeign;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -242,6 +251,136 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(employeeList.get(0).getBank().getId()).isEqualTo(bankDto.getId());
         assertThat(employeeList.get(0).getBank().getName()).isEqualTo(bankDto.getName());
         assertThat(employeeList.get(0).getBank().getBic()).isEqualTo(bankDto.getBic());
+    }
+
+    @Test
+    public void createEngineAndCar_OneToOne(){
+        var engine = new Engine();
+        engine.setPower(123L);
+
+        var createdEngine = engineRepository.save(engine);
+
+        assertThat(createdEngine).isNotNull();
+        assertThat(createdEngine.getId()).isNotNull();
+        assertThat(createdEngine.getPower()).isEqualTo(engine.getPower());
+
+        var car = new Car();
+        car.setManufacturer("Kia Motors");
+        car.setModel("Rio Style");
+        car.setEngine(createdEngine);
+
+        var createdCar = carRepository.save(car);
+
+        assertThat(createdCar).isNotNull();
+        assertThat(createdCar.getId()).isNotNull();
+        assertThat(createdCar.getManufacturer()).isEqualTo(car.getManufacturer());
+        assertThat(createdCar.getModel()).isEqualTo(car.getModel());
+        assertThat(createdCar.getEngine()).isNotNull();
+        assertThat(createdEngine.getId()).isNotNull();
+        assertThat(createdEngine.getPower()).isEqualTo(engine.getPower());
+    }
+
+    @Test
+    public void createProductsAndStore_OneToMany_ManyToOne(){
+        var product = new Product();
+        product.setName("Молоко для избранных котиков");
+        product.setPrice(1450.0);
+
+        var createdProduct = productRepository.save(product);
+
+        assertThat(createdProduct).isNotNull();
+        assertThat(createdProduct.getId()).isNotNull();
+        assertThat(createdProduct.getName()).isEqualTo(product.getName());
+        assertThat(createdProduct.getPrice()).isEqualTo(product.getPrice());
+
+        var store = new Store();
+        store.setName("5");
+        store.setAddress("г.Продуктовый, ул. Молочная, д. 23");
+        store.setProducts(List.of(product));
+
+        var createdStore = storeRepository.save(store);
+
+        assertThat(createdStore).isNotNull();
+        assertThat(createdStore.getId()).isNotNull();
+        assertThat(createdStore.getName()).isEqualTo(store.getName());
+        assertThat(createdStore.getAddress()).isEqualTo(store.getAddress());
+    }
+
+    @Test
+    public void createParcel_Embeddable(){
+        var address = new Address();
+        address.setZipcode("33333");
+        address.setCity("г.Рязань");
+        address.setStreet("Почтовая");
+        var parcel = new Parcel();
+        parcel.setAddress(address);
+        parcel.setType("Заказное письмо");
+        parcel.setSize(1.0);
+
+        var createdParcel = parcelRepository.save(parcel);
+
+        assertThat(createdParcel).isNotNull();
+        assertThat(createdParcel.getType()).isEqualTo(parcel.getType());
+        assertThat(createdParcel.getSize()).isEqualTo(parcel.getSize());
+        assertThat(createdParcel.getAddress()).isNotNull();
+        assertThat(createdParcel.getAddress().getZipcode()).isEqualTo(address.getZipcode());
+        assertThat(createdParcel.getAddress().getCity()).isEqualTo(address.getCity());
+        assertThat(createdParcel.getAddress().getStreet()).isEqualTo(address.getStreet());
+    }
+
+    @Test
+    public void createHouseAndOwner_ManyToMany(){
+        var house = new House();
+        house.setAddress("г.Рязань, ул. Веселых молочников");
+
+        var createdHouse = houseRepository.save(house);
+
+        assertThat(createdHouse).isNotNull();
+        assertThat(createdHouse.getId()).isNotNull();
+        assertThat(createdHouse.getAddress()).isEqualTo(house.getAddress());
+
+        var owner = new Owner();
+        owner.setFirstName("Петр");
+        owner.setLastName("Петров");
+        owner.setHouses(List.of(createdHouse));
+
+        var createdOwner = ownerRepository.save(owner);
+
+        assertThat(createdOwner).isNotNull();
+        assertThat(createdOwner.getId()).isNotNull();
+        assertThat(createdOwner.getFirstName()).isEqualTo(owner.getFirstName());
+        assertThat(createdOwner.getLastName()).isEqualTo(owner.getLastName());
+        assertThat(createdOwner.getHouses()).isNotNull();
+        assertThat(createdOwner.getHouses().size()).isEqualTo(1);
+        assertThat(createdOwner.getHouses().get(0).getAddress()).isEqualTo(house.getAddress());
+    }
+
+    @Test
+    public void createOwnerAndHouse_ManyToMany(){
+        var owner = new Owner();
+        owner.setFirstName("Петр");
+        owner.setLastName("Петров");
+
+        var createdOwner = ownerRepository.save(owner);
+
+        assertThat(createdOwner).isNotNull();
+        assertThat(createdOwner.getId()).isNotNull();
+        assertThat(createdOwner.getFirstName()).isEqualTo(owner.getFirstName());
+        assertThat(createdOwner.getLastName()).isEqualTo(owner.getLastName());
+
+        var house = new House();
+        house.setAddress("г.Рязань, ул. Веселых молочников");
+        house.setOwners(List.of(createdOwner));
+
+        var createdHouse = houseRepository.save(house);
+
+        assertThat(createdHouse).isNotNull();
+        assertThat(createdHouse.getId()).isNotNull();
+        assertThat(createdHouse.getAddress()).isEqualTo(house.getAddress());
+        assertThat(createdHouse.getOwners()).isNotNull();
+        assertThat(createdHouse.getOwners().size()).isEqualTo(1);
+        assertThat(createdHouse.getOwners().get(0).getFirstName()).isEqualTo(owner.getFirstName());
+        assertThat(createdHouse.getOwners().get(0).getLastName()).isEqualTo(owner.getLastName());
     }
 
     private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {
