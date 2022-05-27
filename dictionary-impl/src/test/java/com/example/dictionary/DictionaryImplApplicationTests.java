@@ -244,6 +244,17 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(employeeList.get(0).getBank().getBic()).isEqualTo(bankDto.getBic());
     }
 
+    @Test
+    public void audit() {
+        final Long id = 5L;
+        var bank = new Bank();
+        bank.setId(id);
+
+        var result = bankService.getBank1(id);
+
+        assertThat(result).isNotNull();
+    }
+
     private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {
         DictionaryBankDto dictionaryBankDto = getDictionaryBankDto();
 
