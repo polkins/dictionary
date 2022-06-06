@@ -4,6 +4,9 @@ import com.example.TestConfiguration;
 import com.example.dictionary.controller.DictionaryBankController;
 import com.example.dictionary.mapper.EmployeeMapper;
 import com.example.dictionary.mapper.qualifier.EmployeeHandler;
+import com.example.dictionary.serialization.DisplayOutput;
+import com.example.dictionary.serialization.JsonIO;
+import com.example.dictionary.serialization.XmlIO;
 import com.example.dictionary.service.BankService;
 import com.example.dictionary.service.MyJDBCService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,15 @@ public abstract class AbstractIntegrationTest extends PostgresIntegrationTest {
 
     @Autowired
     protected EmployeeHandler employeeHandler;
+
+    @Autowired
+    protected DisplayOutput displayOutput;
+
+    @Autowired
+    protected XmlIO xmlIO;
+
+    @Autowired
+    protected JsonIO jsonIO;
 
     @BeforeMethod
     public void setUp() {

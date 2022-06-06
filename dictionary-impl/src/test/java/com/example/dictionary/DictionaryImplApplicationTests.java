@@ -104,7 +104,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getByIdWithJDBC(){
+    public void getByIdWithJDBC() {
         var accounts = createAccountsAndBank();
 
         var accountNumberIvanov = accounts.getLeft();
@@ -128,7 +128,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
     }
 
     @Test
-    public void mapEmployeeToDto(){
+    public void mapEmployeeToDto() {
         var bank = new Bank();
         bank.setId(1L);
         bank.setName("БаБанк");
@@ -154,7 +154,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
     }
 
     @Test
-    public void mapEmployeeDtoToModel(){
+    public void mapEmployeeDtoToModel() {
         var bankDto = new DictionaryBankDto();
         bankDto.setId(1L);
         bankDto.setName("БаБанк");
@@ -183,7 +183,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
     }
 
     @Test
-    public void mapEmployeeToDtoList(){
+    public void mapEmployeeToDtoList() {
         var bank = new Bank();
         bank.setId(1L);
         bank.setName("БаБанк");
@@ -214,7 +214,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
     }
 
     @Test
-    public void mapEmployeeDtoToModelList(){
+    public void mapEmployeeDtoToModelList() {
         var bankDto = new DictionaryBankDto();
         bankDto.setId(1L);
         bankDto.setName("БаБанк");
@@ -242,6 +242,73 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(employeeList.get(0).getBank().getId()).isEqualTo(bankDto.getId());
         assertThat(employeeList.get(0).getBank().getName()).isEqualTo(bankDto.getName());
         assertThat(employeeList.get(0).getBank().getBic()).isEqualTo(bankDto.getBic());
+    }
+
+    @Test
+    public void serializeDeserializeXml() {
+        final String path = "src\\test\\java\\com\\example\\dictionary\\data\\serial.xml";
+        var bankDto = new DictionaryBankDto();
+        bankDto.setId(1L);
+        bankDto.setName("БаБанк");
+        bankDto.setBic("5555");
+        var employeeDto = new EmployeeDto();
+        employeeDto.setId(1L);
+        employeeDto.setName("Иван");
+        employeeDto.setSurname("Иванов");
+        employeeDto.setType(EmployeeType.MANAGER.toString());
+        employeeDto.setBank(bankDto);
+        employeeDto.setDescription("Менеджер");
+
+        // сериализовать в xml и сохранить в файл
+        xmlIO.write(employeeDto, path);
+        // десериализовать из xml
+        var fromXml = xmlIO.read(path).get();
+
+        assertThat(fromXml.getId()).isEqualTo(employeeDto.getId());
+        assertThat(fromXml.getName()).isEqualTo(employeeDto.getName());
+        assertThat(fromXml.getSurname()).isEqualTo(employeeDto.getSurname());
+        assertThat(fromXml.getType()).isEqualTo(EmployeeType.MANAGER.toString());
+        assertThat(fromXml.getDescription()).isEqualTo(employeeDto.getDescription());
+        assertThat(fromXml.getBank()).isNotNull();
+        assertThat(fromXml.getBank().getId()).isEqualTo(bankDto.getId());
+        assertThat(fromXml.getBank().getName()).isEqualTo(bankDto.getName());
+        assertThat(fromXml.getBank().getBic()).isEqualTo(bankDto.getBic());
+    }
+
+    @Test
+    public void serializeDeserializeJson() {
+        var bankDto = new DictionaryBankDto();
+        bankDto.setId(1L);
+        bankDto.setName("БаБанк");
+        bankDto.setBic("5555");
+        var employeeDto = new EmployeeDto();
+        employeeDto.setId(1L);
+        employeeDto.setName("Иван");
+        employeeDto.setSurname("Иванов");
+        employeeDto.setType(EmployeeType.MANAGER.toString());
+        employeeDto.setBank(bankDto);
+        employeeDto.setDescription("Менеджер");
+
+        // сериализовать в json
+        var json = jsonIO.write(employeeDto).get();
+        // десериализовать из json
+        var fromJson = jsonIO.read(json).get();
+
+        assertThat(fromJson.getId()).isEqualTo(employeeDto.getId());
+        assertThat(fromJson.getName()).isEqualTo(employeeDto.getName());
+        assertThat(fromJson.getSurname()).isEqualTo(employeeDto.getSurname());
+        assertThat(fromJson.getType()).isEqualTo(EmployeeType.MANAGER.toString());
+        assertThat(fromJson.getDescription()).isEqualTo(employeeDto.getDescription());
+        assertThat(fromJson.getBank()).isNotNull();
+        assertThat(fromJson.getBank().getId()).isEqualTo(bankDto.getId());
+        assertThat(fromJson.getBank().getName()).isEqualTo(bankDto.getName());
+        assertThat(fromJson.getBank().getBic()).isEqualTo(bankDto.getBic());
+    }
+
+    @Test
+    public void display() {
+        final String path = "src\\test\\java\\com\\example\\dictionary\\data\\serial.xml";
+        displayOutput.display(path);
     }
 
     private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {

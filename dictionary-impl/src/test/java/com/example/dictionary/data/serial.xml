@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<employeeDto id="1">
+    <name>Иван</name>
+    <surname>Иванов</surname>
+    <type>MANAGER</type>
+    <bank>
+        <bic>5555</bic>
+        <id>1</id>
+        <name>БаБанк</name>
+    </bank>
+    <description>Менеджер</description>
+</employeeDto>
