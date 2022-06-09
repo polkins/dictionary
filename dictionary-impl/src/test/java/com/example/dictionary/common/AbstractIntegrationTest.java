@@ -6,6 +6,8 @@ import com.example.dictionary.mapper.EmployeeMapper;
 import com.example.dictionary.mapper.qualifier.EmployeeHandler;
 import com.example.dictionary.service.BankService;
 import com.example.dictionary.service.MyJDBCService;
+import com.example.dictionary.socket.Client;
+import com.example.dictionary.socket.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +38,12 @@ public abstract class AbstractIntegrationTest extends PostgresIntegrationTest {
 
     @Autowired
     protected EmployeeHandler employeeHandler;
+
+    @Autowired
+    protected Server server;
+
+    @Autowired
+    protected Client client;
 
     @BeforeMethod
     public void setUp() {
