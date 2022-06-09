@@ -104,7 +104,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getByIdWithJDBC(){
+    public void getByIdWithJDBC() {
         var accounts = createAccountsAndBank();
 
         var accountNumberIvanov = accounts.getLeft();
@@ -128,7 +128,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
     }
 
     @Test
-    public void mapEmployeeToDto(){
+    public void mapEmployeeToDto() {
         var bank = new Bank();
         bank.setId(1L);
         bank.setName("БаБанк");
@@ -154,7 +154,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
     }
 
     @Test
-    public void mapEmployeeDtoToModel(){
+    public void mapEmployeeDtoToModel() {
         var bankDto = new DictionaryBankDto();
         bankDto.setId(1L);
         bankDto.setName("БаБанк");
@@ -183,7 +183,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
     }
 
     @Test
-    public void mapEmployeeToDtoList(){
+    public void mapEmployeeToDtoList() {
         var bank = new Bank();
         bank.setId(1L);
         bank.setName("БаБанк");
@@ -214,7 +214,7 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
     }
 
     @Test
-    public void mapEmployeeDtoToModelList(){
+    public void mapEmployeeDtoToModelList() {
         var bankDto = new DictionaryBankDto();
         bankDto.setId(1L);
         bankDto.setName("БаБанк");
@@ -242,6 +242,18 @@ public class DictionaryImplApplicationTests extends AbstractIntegrationTest {
         assertThat(employeeList.get(0).getBank().getId()).isEqualTo(bankDto.getId());
         assertThat(employeeList.get(0).getBank().getName()).isEqualTo(bankDto.getName());
         assertThat(employeeList.get(0).getBank().getBic()).isEqualTo(bankDto.getBic());
+    }
+
+    @Test
+    public void getMessageFromServer_message_clientShouldGetMessage() throws InterruptedException {
+        final int port = 2048;
+        final String message = "Java";
+        Thread serverThread = new Thread(() -> server.start(port, message));
+        serverThread.start();
+        Thread.sleep(1000);
+
+        var result = client.start(port);
+        assertThat(result).isEqualTo(message);
     }
 
     private Pair<DictionaryAccountDto, DictionaryAccountDto> createAccountsAndBank() {
